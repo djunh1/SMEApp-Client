@@ -27,12 +27,22 @@
                             </div>
                         </a>
                     </section>
+                    <section>
+                        <a href="#">
+                            <span>User Profiles</span>
+                            <div class="subs">
+                                <router-link :to="{name: 'profiles'}">
+                                    Profiles
+                                </router-link>
+                            </div>
+                        </a>
+                    </section>
                 </section>
             </nav>
         </aside>
         <main class="body">
             <router-view :key="route.path">
-                
+
             </router-view>
         </main>
     </div>

@@ -1,16 +1,16 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import PortfoliosView from '@/views/portfolios/screens/PortfoliosView.vue'
 import ReviewsView from '@/views/portfolios/screens/ReviewsView.vue'
 import StocksView from '@/views/portfolios/screens/StocksView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import ProfilesView from '@/views/relations/screens/ProfilesView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'dashboard',
     component: DashboardView,
-    redirect: '/portfolios/',
+    // redirect: '/portfolios/',
 
     children: [
       {
@@ -27,6 +27,12 @@ const routes: Array<RouteRecordRaw> = [
         path: '/stocks',
         name: 'stocks',
         component: StocksView
+      },
+      { // TODO-2 add user profiles
+        path: '/profiles',
+        name: 'profiles',
+        component: ProfilesView,
+        meta: { screen: 'profiles' }
       },
     ]
   },
