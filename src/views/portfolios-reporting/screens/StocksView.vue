@@ -26,7 +26,7 @@
                     <td>{{ item.company_name }}</td>
                     <td>{{ item.ticker_name }}</td>
                     <td>{{ item.sector }}</td>
-                    <td>{{ item.created_at }}</td>
+                    <td>{{ formatDate(item.created_at) }}</td>
                     <td class="table-actions">{{ item.portfolio.portfolio_type }}</td>
                     <td> 
                         <span>
@@ -44,7 +44,7 @@
 
 
 <script lang="ts">
-
+import formatDate from '@/composables/utils';
 import { loadPortfolioStocks } from '@/api/portfolios';
 import { defineComponent, onMounted, ref } from 'vue';
 import CreateStockModal from '../modals/CreateStockModal.vue';
@@ -86,6 +86,7 @@ export default defineComponent ({
         return {
             portfolioStocks,
             isCreateModalVisible,
+            formatDate,
             openCreateModal,
             closeModal
         }
