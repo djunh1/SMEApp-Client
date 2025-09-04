@@ -27,3 +27,11 @@ npm run test:e2e
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+# In the event you need to switch node
+
+```
+nvm ls
+nvm use 24.7.0
+```

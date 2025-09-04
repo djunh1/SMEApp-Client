@@ -1,0 +1,187 @@
+.button {
+    padding: 8px 14px;
+    font-size: 15px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: inherit;
+    line-height: 1;
+    border-radius: 20px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $color-brand-action-1;
+        border-color: $color-brand-action-1;
+    }
+
+    &.is-primary {
+        background-color: $color-primary;
+        color: $color-white;
+        border-radius: 5px;
+        &:hover {
+            opacity: .9;
+        }
+    }
+
+    &.is-on-header {
+        margin-right: .8rem;
+    }
+}
+
+table {
+    width: 100%;
+    border: 1px solid #e4e3e1;
+
+    thead {
+        tr {
+            background-color: #e4e3e1;
+        }
+
+        th {
+           font-weight: 700;
+           font-size: 10px;
+           line-height:15px;
+           padding: 4px;
+        }
+    }
+
+    tbody {
+        tr {
+            background-color: #fff;
+        }
+
+        td {
+            font-weight: 400;
+            font-size: 12px;
+            padding: 10px 8px !important;
+        }
+
+        tr:nth-child(even){
+            background-color: #f5f4f9;
+        }
+
+        tr:hover {
+            background-color: #e1e5e8;
+            cursor: pointer;
+        }
+    }
+}
+
+.table_icon {
+    height: 20px;
+
+    &__left {
+        margin-left: .8rem;
+    }
+}
+
+.filters {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    margin: 20px;
+    top: 10px;
+
+    .filter-wrapper {
+        position: relative;
+
+        p {
+            position: absolute;
+            font-family: "IBM Plex Sans";
+            font-style: normal;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 18x;
+            color: #313f57;
+            top: -35px;
+            left: 15px;
+        }
+    }
+
+    input,
+    select {
+        min-width: 200px;
+        margin-right: 20px;
+        border: 1px solid #e4e3e1;
+        border-radius: 5px;
+        padding: 10px 25px 10px 15px;
+        max-height: 40px;
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    .filters_button {
+        min-width: 200px;
+        margin-right: 20px;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        width: 60px;
+        height: 40px;
+
+        &:hover {
+            cursor: pointer;
+            opacity: .8;
+        }
+    }
+
+    #filter {
+        background-color: $color-filter;
+    }
+
+    #refresh {
+        background-color: $color-refresh;
+    }
+}
+
+.sorting-icon {
+    vertical-align: -5px;
+    margin-left: 5px;
+}
+.active-sorting {
+    border-radius: 50%;
+    background-color: $color-1;
+    padding-left: 2px;
+}
+
+.table-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.action-icon-wrapper {
+    position: relative;
+
+    .tooltiptext {
+        visibility: hidden;
+        width: 70px;
+        font-family: "IBM Plex Sans";
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        background-color: $color-brand-2;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 120%;
+        left: -150%;
+    }
+
+    .action-icon {
+        padding: 10px 0;
+        max-width: 30px;
+    }
+
+    .action-icon:hover + .tooltiptext {
+        visibility: visible;
+    }
+
+    .sorting-icon:hover + .tooltiptext {
+        visibility: visible;
+      }
+}
