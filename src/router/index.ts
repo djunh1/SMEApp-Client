@@ -19,12 +19,6 @@ const routes: Array<RouteRecordRaw> = [
         meta: { screen: 'portfolios' }
       },
       {
-        path: '/reviews',
-        name: 'reviews',
-        component: ReviewsView,
-        meta: { screen: 'reviews' }
-      },
-      {
         path: '/stocks',
         name: 'stocks',
         component: StocksView,

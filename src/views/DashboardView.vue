@@ -19,9 +19,6 @@
                             <router-link :to="{ name: 'portfolios' }" class="each">
                                 Portfolios
                             </router-link>
-                            <router-link :to="{ name: 'reviews' }" class="each">
-                                Reviews
-                            </router-link>
                             <router-link :to="{ name: 'stocks' }" class="each">
                                 Stocks
                             </router-link>

@@ -39,7 +39,7 @@
 </template>
 <script lang="ts">
 
-import { loadPortfolios } from '@/api/portfolios';
+import { loadPortfolios } from '@/api/portfolios/portfolios';
 import { defineComponent, onMounted, ref } from 'vue';
 import CreatePortfolioModal from '../modals/CreatePortfolioModal.vue';
 
@@ -83,12 +83,8 @@ export default defineComponent ({
             isCreateModalVisible,
             openCreateModal,
             closeModal
-
         }
 
     }
 })
 </script>
-<style lang="">
-    
-</style>
