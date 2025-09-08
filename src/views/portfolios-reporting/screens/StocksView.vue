@@ -22,7 +22,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, i) in portfolioStocks" :key="i">
+                <tr v-for="(item, i) in allStocks" :key="i">
                     <td>{{ item.company_name }}</td>
                     <td>{{ item.ticker_name }}</td>
                     <td>{{ item.sector }}</td>
@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import formatDate from '@/composables/utils';
-import { loadPortfolioStocks } from '@/api/portfolios';
+import { loadStocks } from '@/api/portfolios/stocks';
 import { defineComponent, onMounted, ref } from 'vue';
 import CreateStockModal from '../modals/CreateStockModal.vue';
 
@@ -73,18 +73,18 @@ export default defineComponent ({
             isCreateModalVisible.value = false
         }
 
-        const portfolioStocks = ref()
+        const allStocks = ref()
 
-        const getAllPortfolioStocks = async () => {
-            portfolioStocks.value = await loadPortfolioStocks();
+        const getAllStocks = async () => {
+            allStocks.value = await loadStocks();
         }
 
         onMounted(() => {
-            getAllPortfolioStocks();
+            getAllStocks();
         })
 
         return {
-            portfolioStocks,
+            allStocks,
             isCreateModalVisible,
             formatDate,
             openCreateModal,
