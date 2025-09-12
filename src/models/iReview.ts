@@ -4,7 +4,7 @@ import { iPortfolio } from './iPortfolio';
 
 export interface iReview {
     id: string; //TODO needs UUID
-    body: string | null;
+    body: string;
     portfolio: iPortfolio;
     created: Date;
 

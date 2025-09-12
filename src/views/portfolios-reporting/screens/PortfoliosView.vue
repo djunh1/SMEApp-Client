@@ -9,7 +9,22 @@
         </button>
     </header>
 
-    <create-portfolio-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-portfolio-modal>
+    <create-portfolio-modal v-if="isCreateModalVisible" 
+                            @close-modal="closeModal()"
+                            @update-list="updateList()"></create-portfolio-modal>
+
+    <edit-portfolio-modal v-if="isEditModalVisible"
+                      @close-modal="closeModal"
+                      :portfolio="portfolioObjectToUpdate"
+                      @handle-edit="handleEdit"></edit-portfolio-modal>
+
+
+    <confirm-delete-modal v-if="isDeleteModalVisible" 
+                        :entity-type="ENTIRY_TYPE" 
+                        :entity-id="entityId" @close-modal="closeModal"
+                        @handle-delete="handleDelete">
+
+    </confirm-delete-modal>
     <div>
         <table>
             <thead>
@@ -20,16 +35,16 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, i) in portfolios" :key="i">
+                <tr v-for="(item, i) in allPortfolios" :key="i">
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.portfolio_type }}</td>
                     <td class="table-actions"> 
                         <span>
-                            <Edit_Icon class="table_icon__left" />
+                            <Edit_Icon @click="openEditModal(item.id)" class="table_icon" />
                         </span>
                         <span>
-                            <Trash_Icon class="table_icon__left" />
+                            <Trash_Icon @click="openDeleteModal(item.id)" class="table_icon__left" />
                         </span>
                     </td>
                 </tr>
@@ -39,14 +54,16 @@
 </template>
 <script lang="ts">
 
-import { loadPortfolios } from '@/api/portfolios/portfolios';
-import { defineComponent, onMounted, ref } from 'vue';
+import { loadPortfolios, editRecordInPortfolios } from '@/api/portfolios/portfolios';
+import { defineComponent, onMounted, ref, toRaw } from 'vue';
 import CreatePortfolioModal from '../modals/CreatePortfolioModal.vue';
+import EditPortfolioModal from '../modals/EditPortfolioModal.vue';
 
 import Edit_Icon from '@/assets/icons/Edit_Icon.vue';
 import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
 import Plus_Icon from '@/assets/icons/Plus_Icon.vue';
-
+import ConfirmDeleteModal from '../modals/ConfirmDeleteModal.vue';
+import { deleteRecordInPortfolios } from '@/api/portfolios/portfolios';
 
 export default defineComponent ({
 
@@ -54,35 +71,102 @@ export default defineComponent ({
         Edit_Icon,
         Plus_Icon,
         Trash_Icon,
-        CreatePortfolioModal
+        EditPortfolioModal,
+        CreatePortfolioModal,
+        ConfirmDeleteModal
+        
     },
 
     setup () {
-        const portfolios = ref()
 
-        const isCreateModalVisible = ref(false)
+        // For deletion
+        const ENTIRY_TYPE = 'portfolio';
+        const entityId = ref();
+        const portfolioIdToDelete = ref('');
+
+        const portfolios = ref();
+
+        const isCreateModalVisible = ref(false);
+        const isEditModalVisible = ref(false);
+        const isDeleteModalVisible = ref(false);
+
+
+        // Need portfolio itself and the id for update
+        const portfolioIdToUpdate = ref('')
+        const portfolioObjectToUpdate = ref();
+
+        const allPortfolios = ref();
 
         const openCreateModal = () => {
             isCreateModalVisible.value = true
         }
 
-        const closeModal = () => {
-            isCreateModalVisible.value = false
+        const openEditModal = (id: string) => {
+            portfolioIdToUpdate.value = id;
+            portfolioObjectToUpdate.value = toRaw(allPortfolios.value).find((x:any ) => x.id === id);
+            isEditModalVisible.value = true;
         }
 
-        const getPortfolios = async () => {
-            portfolios.value = await loadPortfolios();
+        const openDeleteModal = (id: string) => {
+            console.log('opening delete modal i think')
+            entityId.value = id;
+            isDeleteModalVisible.value = true;
+            portfolioIdToDelete.value = id;
         }
+
+        const updateList = async () => {
+            allPortfolios.value = await loadPortfolios();
+        }
+
+        const closeModal = () => {
+            isCreateModalVisible.value = false;
+            isEditModalVisible.value = false;
+            isDeleteModalVisible.value = false;
+        }
+
+        const handleEdit = (editedPortfolio: any) => {
+            isEditModalVisible.value = false;
+            let id = portfolioIdToUpdate.value;
+            editRecordInPortfolios(portfolioIdToUpdate.value, editedPortfolio)
+            .then( () => {
+                closeModal();
+                updateList();
+                portfolioIdToUpdate.value = '';
+            })
+        }
+
+        const handleDelete = () => {
+            isDeleteModalVisible.value = false;
+            deleteRecordInPortfolios(portfolioIdToDelete.value).then( () => {
+                updateList();
+            })
+
+        }
+
 
         onMounted( () => {
-            getPortfolios();
+            updateList();
         })
 
         return {
-            portfolios,
+            entityId,
+            ENTIRY_TYPE,
+            portfolioIdToDelete,
+            isDeleteModalVisible,
+
+            handleEdit,
+            handleDelete,
+            allPortfolios,
+            portfolioObjectToUpdate,
             isCreateModalVisible,
+            isEditModalVisible,
+
+            closeModal,
             openCreateModal,
-            closeModal
+            openEditModal,
+            openDeleteModal,
+            
+            updateList
         }
 
     }

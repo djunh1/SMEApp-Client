@@ -10,5 +10,5 @@ export interface iStock {
     sector: string | null;
     createdAt: Date;
     updatedAt: Date;
-
+    portfolioId: string
 }

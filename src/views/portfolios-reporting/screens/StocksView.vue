@@ -9,7 +9,14 @@
         </button>
     </header>
 
-    <create-stock-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-stock-modal>
+    <create-stock-modal v-if="isCreateModalVisible" 
+                         @close-modal="closeModal()"
+                         @update-list="updateList()"></create-stock-modal>
+
+    <edit-stock-modal v-if="isEditModalVisible"
+                      @close-modal="closeModal"
+                      :stock="stockObjToUpdate"
+                      @handle-edit="handleEdit"></edit-stock-modal>
     <div>    
         <table>
             <thead>
@@ -18,7 +25,10 @@
                     <th>Ticker </th>
                     <th>Sector</th>
                     <th>Added on</th>
+                    <th>Portfolio name</th>
                     <th>Portfolio type</th>
+                    <th>Action Jackson</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -27,10 +37,11 @@
                     <td>{{ item.ticker_name }}</td>
                     <td>{{ item.sector }}</td>
                     <td>{{ formatDate(item.created_at) }}</td>
+                    <td>{{ item.portfolio.name }}</td>
                     <td class="table-actions">{{ item.portfolio.portfolio_type }}</td>
                     <td> 
                         <span>
-                            <Edit_Icon class="table_icon__left" />
+                            <Edit_Icon @click="openEditModal(item.id)" class="table_icon__left" />
                         </span>
                         <span>
                             <Trash_Icon class="table_icon__left" />
@@ -45,9 +56,10 @@
 
 <script lang="ts">
 import formatDate from '@/composables/utils';
-import { loadStocks } from '@/api/portfolios/stocks';
-import { defineComponent, onMounted, ref } from 'vue';
+import { editRecordInStocks, loadStocks } from '@/api/portfolios/stocks';
+import { defineComponent, onMounted, ref, toRaw } from 'vue';
 import CreateStockModal from '../modals/CreateStockModal.vue';
+import EditStockModal from '../modals/EditStockModal.vue';
 
 import Edit_Icon from '@/assets/icons/Edit_Icon.vue';
 import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
@@ -59,36 +71,67 @@ export default defineComponent ({
         Edit_Icon,
         Plus_Icon,
         Trash_Icon,
-        CreateStockModal
+        CreateStockModal,
+        EditStockModal
     },
 
     setup () {
         const isCreateModalVisible = ref(false)
+        const isEditModalVisible = ref(false);
+        const stockIdToUpdate = ref()
+        const stockObjToUpdate = ref()
+        const allStocks = ref()
 
         const openCreateModal = () => {
             isCreateModalVisible.value = true
         }
 
-        const closeModal = () => {
-            isCreateModalVisible.value = false
+        const openEditModal = (id: string) => {
+            stockIdToUpdate.value = id;
+            stockObjToUpdate.value = toRaw(allStocks.value).find((x:any ) => x.id === id);
+            isEditModalVisible.value = true;
         }
 
-        const allStocks = ref()
+        const closeModal = () => {
+            isCreateModalVisible.value = false
+            isEditModalVisible.value = false;
+        }
 
-        const getAllStocks = async () => {
-            allStocks.value = await loadStocks();
+       
+        const updateList = async () => {
+            allStocks.value = await loadStocks(); 
+        }
+
+        const handleEdit = (editedStock: any) => {
+            isEditModalVisible.value = false;
+            let id = stockIdToUpdate.value;
+            
+            console.log("the stock to edit -->", editedStock)
+            editRecordInStocks(stockIdToUpdate.value, editedStock)
+            .then( () => {
+                closeModal();
+                updateList();
+                stockIdToUpdate.value = '';
+            })
         }
 
         onMounted(() => {
-            getAllStocks();
+            updateList();
         })
+
+        
 
         return {
             allStocks,
             isCreateModalVisible,
+            isEditModalVisible,
             formatDate,
             openCreateModal,
-            closeModal
+            handleEdit,
+            closeModal,
+            openEditModal,
+            updateList,
+            stockObjToUpdate
         }
 
     }

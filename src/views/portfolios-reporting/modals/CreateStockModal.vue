@@ -24,12 +24,19 @@
         </strong>
         </label>
 
-        <input type="text" v-model="portfolioId"></input>
+        <select v-model="portfolioId">
+          <option value="">Select your portfolio</option>
+          <option v-for="portfolio in portfolios" 
+                  :key="portfolio.id"
+                  :value="portfolio.id">
+                  {{ portfolio.name }} ({{ portfolio.portfolio_type }})
+          </option>
+        </select>
 
         <div class="footer">
             <div class="content">
-                <button @click="closeModal()">Cancel</button>
-                <button @click="addNewRecord()">Add Ticker</button>
+                <button class="cancel" @click="closeModal()">Cancel</button>
+                <button :disabled="!buttenEnabled" class="confirm" @click="addNewRecord()">Add Ticker</button>
             </div>
         </div>
     </div>
@@ -41,7 +48,10 @@
 
 import Modal from "@/components/common/Modal.vue";
 import Close_Icon from "@/assets/icons/Close_Icon.vue";
-import { defineComponent, ref } from "vue";
+import { defineComponent, onBeforeMount, ref, watch } from "vue";
+import { loadPortfolios } from "@/api/portfolios/portfolios";
+import { iStock } from "@/models/iStock";
+import { addNewStock } from "@/api/portfolios/stocks";
 
 export default defineComponent({
     components: {
@@ -49,23 +59,60 @@ export default defineComponent({
     Close_Icon
 },
 
-emits: ["close-modal"],
+emits: ['close-modal', 'update-list'],
 
 setup(_, context) {
-    const stockTicker = ref('eg. TSLA');
-    const portfolioId = ref('')
+    const stockTicker = ref('');
+    const portfolioId = ref('') 
+
+    const portfolios = ref();
+    const buttenEnabled = ref();
+
+    // TODO scope this to the users portfolio only..
+    const getPortfolios = async () => {
+      portfolios.value = await loadPortfolios();
+    }
+
+    watch( () => [stockTicker.value, portfolioId.value], 
+    () => {
+      if(stockTicker.value === '' || portfolioId.value === ''){
+        buttenEnabled.value = false
+      } else {
+        buttenEnabled.value = true
+      }
+
+    }
+  )
 
     const addNewRecord = () => {
+      let newStockRecord: Partial<iStock> = {};
+      newStockRecord.portfolioId = portfolioId.value;
+      newStockRecord.tickerName = stockTicker.value;
+
+      addNewStock(newStockRecord).then(() => {
+        updateList();
         closeModal();
+      })
     }
 
     const closeModal = () => {
         context.emit('close-modal');
     }
 
+    const updateList = () => {
+      context.emit('update-list')
+    }
+
+    onBeforeMount( () => {
+      getPortfolios();
+    })
+
     return {
+        buttenEnabled,
         portfolioId,
         stockTicker,
+
+        portfolios, 
         addNewRecord,
         closeModal
     };

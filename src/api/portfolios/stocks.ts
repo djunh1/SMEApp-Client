@@ -1,3 +1,4 @@
+import { iStock } from "@/models/iStock";
 import api from "../api";
 
 import { AxiosResponse, AxiosError } from "axios";
@@ -7,18 +8,56 @@ const URLS = {
 }
 
 export const loadStocks = () => {
-
     return new Promise((resolve, reject) => {
         api.get(URLS.stocks)
-        .then((response: AxiosResponse) => {
-            if(response.status === 200){
+            .then((response: AxiosResponse) => {
+                if (response.status === 200) {
+                    resolve(response.data);
+                } else {
+                    reject();
+                }
+            })
+            .catch((error: AxiosError) => {
+                console.log("error in loading all stocks -> ", error)
+            });
+    });
+};
+
+// Partial doesnt use all the fields.  
+// TODO can dynamicallhy search for stock comapny name and the sector
+export const addNewStock = (newStockRecord: Partial<iStock>) => {
+    return new Promise((resolve, reject) => {
+        api.post(URLS.stocks,
+            {
+                portfolio: newStockRecord.portfolioId,
+                ticker_name: newStockRecord.tickerName,
+                created_at: new Date()
+
+            }).then((response: AxiosResponse) => {
+                if (response.status === 201) {
+                    resolve(response.data);
+                } else {
+                    reject();
+                }
+            }).catch((error: AxiosError) => {
+                console.log("error in adding the stock -> ", error)
+            });
+    });
+};
+
+export const editRecordInStocks = (id: string, editedStonk: iStock) => {
+    return new Promise((resolve, reject) => {
+        console.log("The new way to reference an ID ==> ", editedStonk.portfolio!.id)
+        api.patch(URLS.stocks + id + '/', {
+                portfolio: editedStonk.portfolio!.id,
+            }).then((response: AxiosResponse) => {
+            if (response.status === 200) {
                 resolve(response.data);
             } else {
                 reject();
             }
-        })
-        .catch((error: AxiosError) => {
-            console.log("error in loading portfolios -> ", error)
-        }); 
+            }).catch((error: AxiosError) => {
+                console.log("Error in updating this stocks portfolio," , error)
+            });
     });
 };

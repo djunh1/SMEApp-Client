@@ -11,8 +11,8 @@ const api = (axios: Axios) => {
     return {
         get: <T>(url: string) => axios.get<T>(url),
         post:<T>(url: string, body: object) => axios.post<T>(url, body),
-        put:<T>(url: string, body: object) => axios.post<T>(url, body),
-        patch:<T>(url: string, body: object) => axios.post<T>(url, body),
+        put:<T>(url: string, body: object) => axios.put<T>(url, body),
+        patch:<T>(url: string, body: object) => axios.patch<T>(url, body),
         delete:<T>(url:string) => axios.delete<T>(url)
     };
 };

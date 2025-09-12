@@ -5,7 +5,7 @@ import { iTag } from './iTag';
 export interface iPortfolio {
     id: string;  //TODO needs UUID
     name: string;
-    description: string | null;
+    description: string;
     createdAt: Date;
     updatedAt: Date;
     portfolioType: string;
