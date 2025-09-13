@@ -13,8 +13,7 @@ export default {
 
     actions: {
         async setPortfolios({ commit }: { commit: Commit }, payload: any) {
-            let data = await loadPortfolios()
-
+            let data = await loadPortfolios();
             //save the data to state
             commit('SET_PORTFOLIOS', data);
             return data;

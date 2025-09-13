@@ -57,13 +57,15 @@
 <script lang="ts">
 import formatDate from '@/composables/utils';
 import { editRecordInStocks, loadStocks } from '@/api/portfolios/stocks';
-import { defineComponent, onMounted, ref, toRaw } from 'vue';
+import { computed, defineComponent, onMounted, ref, toRaw } from 'vue';
 import CreateStockModal from '../modals/CreateStockModal.vue';
 import EditStockModal from '../modals/EditStockModal.vue';
 
 import Edit_Icon from '@/assets/icons/Edit_Icon.vue';
 import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
 import Plus_Icon from '@/assets/icons/Plus_Icon.vue';
+
+import { useStore } from 'vuex';
 
 export default defineComponent ({
 
@@ -76,11 +78,17 @@ export default defineComponent ({
     },
 
     setup () {
+        const store = useStore();
+
         const isCreateModalVisible = ref(false)
         const isEditModalVisible = ref(false);
         const stockIdToUpdate = ref()
         const stockObjToUpdate = ref()
-        const allStocks = ref()
+        const allStocks = computed( () => {
+            let data = store.getters['stockManagement/getStocks']
+            if(!data) return
+            return data
+        })
 
         const openCreateModal = () => {
             isCreateModalVisible.value = true
@@ -99,7 +107,9 @@ export default defineComponent ({
 
        
         const updateList = async () => {
-            allStocks.value = await loadStocks(); 
+            return Promise.allSettled([
+                store.dispatch('stockManagement/setStocks', {})
+            ])
         }
 
         const handleEdit = (editedStock: any) => {

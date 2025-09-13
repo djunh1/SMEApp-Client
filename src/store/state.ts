@@ -4,7 +4,8 @@ import { iPortfolio } from "@/models/iPortfolio";
 const state = (): GlobalState => {
     return {
         portfolios: [],
-        portfolioDetails: {} as iPortfolio
+        portfolioDetails: {} as iPortfolio,
+        stocks: []
     }
 }
 
