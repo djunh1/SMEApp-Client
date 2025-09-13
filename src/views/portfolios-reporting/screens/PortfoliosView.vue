@@ -55,7 +55,7 @@
 <script lang="ts">
 
 import { loadPortfolios, editRecordInPortfolios } from '@/api/portfolios/portfolios';
-import { defineComponent, onMounted, ref, toRaw } from 'vue';
+import { computed, defineComponent, onMounted, ref, toRaw } from 'vue';
 import CreatePortfolioModal from '../modals/CreatePortfolioModal.vue';
 import EditPortfolioModal from '../modals/EditPortfolioModal.vue';
 
@@ -64,6 +64,10 @@ import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
 import Plus_Icon from '@/assets/icons/Plus_Icon.vue';
 import ConfirmDeleteModal from '../modals/ConfirmDeleteModal.vue';
 import { deleteRecordInPortfolios } from '@/api/portfolios/portfolios';
+
+// State mgmt
+
+import { useStore } from 'vuex';
 
 export default defineComponent ({
 
@@ -78,13 +82,12 @@ export default defineComponent ({
     },
 
     setup () {
+        const store = useStore();
 
         // For deletion
         const ENTIRY_TYPE = 'portfolio';
         const entityId = ref();
         const portfolioIdToDelete = ref('');
-
-        const portfolios = ref();
 
         const isCreateModalVisible = ref(false);
         const isEditModalVisible = ref(false);
@@ -95,7 +98,11 @@ export default defineComponent ({
         const portfolioIdToUpdate = ref('')
         const portfolioObjectToUpdate = ref();
 
-        const allPortfolios = ref();
+        const allPortfolios = computed( () => {
+            let data = store.getters['portfolioManagement/getPortfolios']
+            if(!data) return
+            return data;
+        })
 
         const openCreateModal = () => {
             isCreateModalVisible.value = true
@@ -108,14 +115,18 @@ export default defineComponent ({
         }
 
         const openDeleteModal = (id: string) => {
-            console.log('opening delete modal i think')
             entityId.value = id;
             isDeleteModalVisible.value = true;
             portfolioIdToDelete.value = id;
         }
 
         const updateList = async () => {
-            allPortfolios.value = await loadPortfolios();
+            // Replace with new state mgmt
+            //allPortfolios.value = await loadPortfolios();
+
+            return Promise.allSettled([
+                store.dispatch('portfolioManagement/setPortfolios', {})
+            ])
         }
 
         const closeModal = () => {
