@@ -35,16 +35,16 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, i) in allPortfolios" :key="i">
+                <tr v-for="(item, i) in allPortfolios" :key="i" @click="openDetails(item)">
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.portfolio_type }}</td>
                     <td class="table-actions"> 
                         <span>
-                            <Edit_Icon @click="openEditModal(item.id)" class="table_icon" />
+                            <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon" />
                         </span>
                         <span>
-                            <Trash_Icon @click="openDeleteModal(item.id)" class="table_icon__left" />
+                            <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="table_icon__left" />
                         </span>
                     </td>
                 </tr>
@@ -69,6 +69,11 @@ import { deleteRecordInPortfolios } from '@/api/portfolios/portfolios';
 
 import { useStore } from 'vuex';
 
+// To add links to individual portfolio
+
+import router from '@/router';
+import { iPortfolio } from '@/models/iPortfolio';
+
 export default defineComponent ({
 
     components: {
@@ -92,6 +97,19 @@ export default defineComponent ({
         const isCreateModalVisible = ref(false);
         const isEditModalVisible = ref(false);
         const isDeleteModalVisible = ref(false);
+
+        const openDetails = (item: iPortfolio ) => {
+            let id = item.id;
+            setDataForDetailsPage(item);
+
+            // Redirect
+            router.push({
+                name: 'portfolio-details',
+                params: {
+                    id
+                }
+            });
+        }
 
 
         // Need portfolio itself and the id for update
@@ -154,9 +172,15 @@ export default defineComponent ({
 
         }
 
+        const setDataForDetailsPage = (item: iPortfolio) => {
+            return store.dispatch('portfolioManagement/setPortfolioDetails', {
+                ...item
+            })
+        }
+
 
         onMounted( () => {
-            updateList();
+            if(!allPortfolios.value) updateList();
         })
 
         return {
@@ -177,7 +201,9 @@ export default defineComponent ({
             openEditModal,
             openDeleteModal,
             
+            openDetails,
             updateList
+            
         }
 
     }

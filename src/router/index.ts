@@ -4,6 +4,8 @@ import ReviewsView from '@/views/portfolios-reporting/screens/ReviewsView.vue'
 import StocksView from '@/views/portfolios-reporting/screens/StocksView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import ProfilesView from '@/views/relations/screens/ProfilesView.vue'
+import PortfoliosDetails from '@/views/portfolios-reporting/details/PortfoliosDetails.vue'
+import StocksDetails from '@/views/portfolios-reporting/details/StocksDetails.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -30,6 +32,22 @@ const routes: Array<RouteRecordRaw> = [
         component: ProfilesView,
         meta: { screen: 'profiles' }
       },
+      {
+        path: '/portfolios/:id',
+        name: 'portfolio-details',
+        component: PortfoliosDetails,
+        meta: {
+          screen: 'portfolio-details'
+        }
+      },
+      {
+        path: '/stocks/:id',
+        name: 'stock-details',
+        component: StocksDetails,
+        meta: {
+          screen: 'stock-details'
+        }
+      }
     ]
   },
 ]

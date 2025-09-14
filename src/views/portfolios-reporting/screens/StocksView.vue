@@ -32,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, i) in allStocks" :key="i">
+                <tr v-for="(item, i) in allStocks" :key="i" @click="openDetails(item)">
                     <td>{{ item.company_name }}</td>
                     <td>{{ item.ticker_name }}</td>
                     <td>{{ item.sector }}</td>
@@ -41,10 +41,10 @@
                     <td class="table-actions">{{ item.portfolio.portfolio_type }}</td>
                     <td> 
                         <span>
-                            <Edit_Icon @click="openEditModal(item.id)" class="table_icon__left" />
+                            <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon__left" />
                         </span>
                         <span>
-                            <Trash_Icon class="table_icon__left" />
+                            <Trash_Icon @click.stop class="table_icon__left" />
                         </span>
                     </td>
                 </tr>
@@ -66,6 +66,8 @@ import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
 import Plus_Icon from '@/assets/icons/Plus_Icon.vue';
 
 import { useStore } from 'vuex';
+import { iStock } from '@/models/iStock';
+import router from '@/router';
 
 export default defineComponent ({
 
@@ -125,6 +127,23 @@ export default defineComponent ({
             })
         }
 
+        const openDetails = (item: iStock) => {
+            let id = item.id;
+            setDataForDetailsPage(item);
+            router.push({
+                name: 'stock-details',
+                params: {
+                    id
+                }
+            });
+        }
+
+        const setDataForDetailsPage = (item: iStock) => {
+            return store.dispatch('stockManagement/setStockDetails', {
+                ...item
+            })
+        }
+
         onMounted(() => {
             updateList();
         })
@@ -141,7 +160,9 @@ export default defineComponent ({
             closeModal,
             openEditModal,
             updateList,
-            stockObjToUpdate
+            stockObjToUpdate,
+
+            openDetails
         }
 
     }

@@ -61,3 +61,21 @@ export const editRecordInStocks = (id: string, editedStonk: iStock) => {
             });
     });
 };
+
+export const getStockDetails = (stockId: string) => {
+    return new Promise((resolve, reject) => {
+        api
+          .get(URLS.stocks + stockId + "/") //, {}
+          .then((response: AxiosResponse) => {
+    
+            if (response.status === 200) {
+              resolve(response.data);
+            } else {
+              reject();
+            }
+          })
+          .catch((error: AxiosError) => {
+            console.log("caught error in stock details >> ", error);
+          });
+      });
+}
