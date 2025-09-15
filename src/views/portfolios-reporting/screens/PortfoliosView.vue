@@ -167,7 +167,9 @@ export default defineComponent ({
         const handleDelete = () => {
             isDeleteModalVisible.value = false;
             deleteRecordInPortfolios(portfolioIdToDelete.value).then( () => {
-                updateList();
+                return store.dispatch('portfolioManagement/deletePortfolio',portfolioIdToUpdate.value)
+            }).catch( (error) => {
+                console.log(error);
             })
 
         }

@@ -118,7 +118,6 @@ export default defineComponent ({
             isEditModalVisible.value = false;
             let id = stockIdToUpdate.value;
             
-            console.log("the stock to edit -->", editedStock)
             editRecordInStocks(stockIdToUpdate.value, editedStock)
             .then( () => {
                 closeModal();

@@ -12,6 +12,9 @@ export default {
         },
         SET_PORTFOLIO_DETAILS(state: GlobalState, context: iPortfolio){
             state.portfolioDetails = context;
+        },
+        DELETE_PORTFOLIO(state: GlobalState, context: iPortfolio){
+            state.portfolios = state.portfolios.filter(x => x.id !== context)
         }
     },
 
@@ -24,6 +27,9 @@ export default {
         },
         async setPortfolioDetails({commit}: {commit: Commit}, payload: iPortfolio){
             commit("SET_PORTFOLIO_DETAILS", payload)
+        },
+        async deletePortfolio({commit}: {commit: Commit}, payload: iPortfolio){
+            commit("DELETE_PORTFOLIO", payload)
         }
     },
 
