@@ -53,13 +53,15 @@ import { loadPortfolios } from "@/api/portfolios/portfolios";
 import { iStock } from "@/models/iStock";
 import { addNewStock } from "@/api/portfolios/stocks";
 
+import { useStore } from "vuex";
+
 export default defineComponent({
     components: {
     Modal,
     Close_Icon
 },
 
-emits: ['close-modal', 'update-list'],
+emits: ['close-modal'],
 
 setup(_, context) {
     const stockTicker = ref('');
@@ -67,6 +69,8 @@ setup(_, context) {
 
     const portfolios = ref();
     const buttenEnabled = ref();
+
+    const store = useStore();
 
     // TODO scope this to the users portfolio only..
     const getPortfolios = async () => {
@@ -89,18 +93,16 @@ setup(_, context) {
       newStockRecord.portfolioId = portfolioId.value;
       newStockRecord.tickerName = stockTicker.value;
 
-      addNewStock(newStockRecord).then(() => {
-        updateList();
+      addNewStock(newStockRecord).then((responseObject) => {
+        store.dispatch('stockManagement/postStock', { responseObject })
         closeModal();
+      }).catch(err => {
+        console.log("error creating the stock, ", err);
       })
     }
 
     const closeModal = () => {
         context.emit('close-modal');
-    }
-
-    const updateList = () => {
-      context.emit('update-list')
     }
 
     onBeforeMount( () => {

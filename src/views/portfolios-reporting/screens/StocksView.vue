@@ -10,13 +10,20 @@
     </header>
 
     <create-stock-modal v-if="isCreateModalVisible" 
-                         @close-modal="closeModal()"
-                         @update-list="updateList()"></create-stock-modal>
+                         @close-modal="closeModal()"></create-stock-modal>
 
     <edit-stock-modal v-if="isEditModalVisible"
                       @close-modal="closeModal"
                       :stock="stockObjToUpdate"
                       @handle-edit="handleEdit"></edit-stock-modal>
+
+
+    <confirm-delete-modal v-if="isDeleteModalVisible" 
+                    :entity-type="ENTIRY_TYPE" 
+                    :entity-id="entityId" @close-modal="closeModal"
+                    @handle-delete="handleDelete">
+    </confirm-delete-modal>
+
     <div>    
         <table>
             <thead>
@@ -44,7 +51,9 @@
                             <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon__left" />
                         </span>
                         <span>
-                            <Trash_Icon @click.stop class="table_icon__left" />
+                            <Trash_Icon @click.stop 
+                                        @click="openDeleteModal(item.id)"
+                                        class="table_icon__left" />
                         </span>
                     </td>
                 </tr>
@@ -60,6 +69,8 @@ import { editRecordInStocks, loadStocks } from '@/api/portfolios/stocks';
 import { computed, defineComponent, onMounted, ref, toRaw } from 'vue';
 import CreateStockModal from '../modals/CreateStockModal.vue';
 import EditStockModal from '../modals/EditStockModal.vue';
+import ConfirmDeleteModal from '../modals/ConfirmDeleteModal.vue';
+import { deleteRecordInStocks } from '@/api/portfolios/stocks';
 
 import Edit_Icon from '@/assets/icons/Edit_Icon.vue';
 import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
@@ -76,14 +87,22 @@ export default defineComponent ({
         Plus_Icon,
         Trash_Icon,
         CreateStockModal,
-        EditStockModal
+        EditStockModal,
+        ConfirmDeleteModal
     },
 
     setup () {
         const store = useStore();
 
+        const ENTIRY_TYPE = 'stock'
+        const entityId = ref();
+        const stockIdToDelete = ref ('')
+
         const isCreateModalVisible = ref(false)
         const isEditModalVisible = ref(false);
+        const isDeleteModalVisible = ref(false);
+ 
+
         const stockIdToUpdate = ref()
         const stockObjToUpdate = ref()
         const allStocks = computed( () => {
@@ -100,6 +119,12 @@ export default defineComponent ({
             stockIdToUpdate.value = id;
             stockObjToUpdate.value = toRaw(allStocks.value).find((x:any ) => x.id === id);
             isEditModalVisible.value = true;
+        }
+
+        const openDeleteModal = (id: string) => {
+            entityId.value = id;
+            isDeleteModalVisible.value = true;
+            stockIdToDelete.value = id;
         }
 
         const closeModal = () => {
@@ -121,8 +146,21 @@ export default defineComponent ({
             editRecordInStocks(stockIdToUpdate.value, editedStock)
             .then( () => {
                 closeModal();
-                updateList();
+
+                store.dispatch('stockManagement/updateStock', 
+                {editedStock, id})
+
                 stockIdToUpdate.value = '';
+            })
+        }
+
+        const handleDelete = () => {
+            isDeleteModalVisible.value = false;
+            deleteRecordInStocks(stockIdToDelete.value)
+            .then( () => {
+                return store.dispatch('stockManagement/deleteStock', stockIdToDelete.value)
+            }).catch( (error) => {
+                console.log(error);
             })
         }
 
@@ -150,15 +188,19 @@ export default defineComponent ({
         
 
         return {
+            entityId,
+            ENTIRY_TYPE,
             allStocks,
             isCreateModalVisible,
+            isDeleteModalVisible,
             isEditModalVisible,
             formatDate,
             openCreateModal,
+            handleDelete,
             handleEdit,
             closeModal,
+            openDeleteModal,
             openEditModal,
-            updateList,
             stockObjToUpdate,
 
             openDetails

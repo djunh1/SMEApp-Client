@@ -35,7 +35,7 @@ export const addNewStock = (newStockRecord: Partial<iStock>) => {
 
             }).then((response: AxiosResponse) => {
                 if (response.status === 201) {
-                    resolve(response.data);
+                    return resolve(response.data);
                 } else {
                     reject();
                 }
@@ -49,6 +49,7 @@ export const editRecordInStocks = (id: string, editedStonk: iStock) => {
     return new Promise((resolve, reject) => {
         console.log("The new way to reference an ID ==> ", editedStonk.portfolio!.id)
         api.patch(URLS.stocks + id + '/', {
+                ticker_name: editedStonk.tickerName,
                 portfolio: editedStonk.portfolio!.id,
             }).then((response: AxiosResponse) => {
             if (response.status === 200) {
@@ -79,3 +80,19 @@ export const getStockDetails = (stockId: string) => {
           });
       });
 }
+
+export const deleteRecordInStocks = (id: string) => {
+    return new Promise((resolve, reject) => {
+        api.delete(URLS.stocks + id + '/')
+            .then((response: AxiosResponse) => {
+                if (response.status === 204) {
+                    resolve(response.data);
+                } else {
+                    reject();
+                }
+            }).catch((error: AxiosError) => {
+                console.log("Error in deleting stock record,", error);
+                reject(error);
+            });
+    });
+};

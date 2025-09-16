@@ -10,8 +10,7 @@
     </header>
 
     <create-portfolio-modal v-if="isCreateModalVisible" 
-                            @close-modal="closeModal()"
-                            @update-list="updateList()"></create-portfolio-modal>
+                            @close-modal="closeModal()"></create-portfolio-modal>
 
     <edit-portfolio-modal v-if="isEditModalVisible"
                       @close-modal="closeModal"
@@ -21,7 +20,8 @@
 
     <confirm-delete-modal v-if="isDeleteModalVisible" 
                         :entity-type="ENTIRY_TYPE" 
-                        :entity-id="entityId" @close-modal="closeModal"
+                        :entity-id="entityId" 
+                        @close-modal="closeModal"
                         @handle-delete="handleDelete">
 
     </confirm-delete-modal>
@@ -156,10 +156,11 @@ export default defineComponent ({
         const handleEdit = (editedPortfolio: any) => {
             isEditModalVisible.value = false;
             let id = portfolioIdToUpdate.value;
+
             editRecordInPortfolios(portfolioIdToUpdate.value, editedPortfolio)
             .then( () => {
                 closeModal();
-                updateList();
+                store.dispatch('portfolioManagement/updatePortfolio', {editedPortfolio, id})
                 portfolioIdToUpdate.value = '';
             })
         }
@@ -182,7 +183,7 @@ export default defineComponent ({
 
 
         onMounted( () => {
-            if(!allPortfolios.value) updateList();
+            updateList();
         })
 
         return {

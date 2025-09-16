@@ -29,7 +29,7 @@
         </strong>
       </label>
 
-      <select>
+      <select v-model="portfolio_type">
         <option value="">Select portfolio type</option>
         <option v-for="type in portfolioTypes" :key="type" :value="type">
           {{ type }}
@@ -56,13 +56,15 @@ import { defineComponent, onBeforeMount, ref, watch } from "vue";
 import { iPortfolio } from "@/models/iPortfolio";
 import { addNewPortfolio } from "@/api/portfolios/portfolios";
 
+import { useStore } from "vuex";
+
 export default defineComponent({
   components: {
     Modal,
     Close_Icon,
   },
 
-  emits: ["close-modal", "update-list"],
+  emits: ["close-modal"],
 
   setup(_, context) {
 
@@ -72,6 +74,7 @@ export default defineComponent({
     const portfolio_type = ref();
     const portfolioTypes = ref(['Long Term', 'Swing', 'Variable', 'Day Trading']);
 
+    const store = useStore();
     watch(() => [portfolioName.value,
     description.value,
     portfolio_type.value],
@@ -90,10 +93,6 @@ export default defineComponent({
       context.emit('close-modal');
     }
 
-    const updateList = () => {
-      context.emit('update-list')
-    }
-
     const addNewRecord = () => {
       let newPortfolioRecord: Partial<iPortfolio> = {};
 
@@ -101,9 +100,12 @@ export default defineComponent({
       newPortfolioRecord.description = description.value;
       newPortfolioRecord.portfolioType = portfolio_type.value;
 
-      addNewPortfolio(newPortfolioRecord).then(() => {
+      addNewPortfolio(newPortfolioRecord).then((responseObject) => {
+        store.dispatch('portfolioManagement/postPortfolio', { responseObject } )
         closeModal();
-        updateList();
+
+      }).catch(err => {
+        console.log("error creating the portfolio", err)
       })
     }
 

@@ -33,7 +33,8 @@ export const addNewPortfolio = (newPortfolioRecord: Partial<iPortfolio>) => {
                 portfolio_type: newPortfolioRecord.portfolioType
             }).then((response: AxiosResponse) => {
                 if (response.status === 201) {
-                    resolve(response.data);
+                    // something to do with the ID on a post...
+                    return resolve(response.data);
                 } else {
                     reject();
                 }
