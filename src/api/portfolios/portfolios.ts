@@ -80,19 +80,19 @@ export const deleteRecordInPortfolios = (id: string) => {
 
 export const getPortfolioDetails = (portfolioId: string) => {
 
-  return new Promise((resolve, reject) => {
-    api
-      .get(URLS.portfolios + portfolioId + "/") //, {}
-      .then((response: AxiosResponse) => {
+    return new Promise((resolve, reject) => {
+        api
+            .get(URLS.portfolios + portfolioId + "/") //, {}
+            .then((response: AxiosResponse) => {
 
-        if (response.status === 200) {
-          resolve(response.data);
-        } else {
-          reject();
-        }
-      })
-      .catch((error: AxiosError) => {
-        console.log("caught error in portfolio details >> ", error);
-      });
-  });
+                if (response.status === 200) {
+                    resolve(response.data);
+                } else {
+                    reject();
+                }
+            })
+            .catch((error: AxiosError) => {
+                console.log("caught error in portfolio details >> ", error);
+            });
+    });
 };

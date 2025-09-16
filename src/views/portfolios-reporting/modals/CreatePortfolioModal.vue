@@ -101,7 +101,7 @@ export default defineComponent({
       newPortfolioRecord.portfolioType = portfolio_type.value;
 
       addNewPortfolio(newPortfolioRecord).then((responseObject) => {
-        store.dispatch('portfolioManagement/postPortfolio', { responseObject } )
+        store.dispatch('portfolioManagement/postPortfolio', { responseObject })
         closeModal();
 
       }).catch(err => {

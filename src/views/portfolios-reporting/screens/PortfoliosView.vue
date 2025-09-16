@@ -9,20 +9,14 @@
         </button>
     </header>
 
-    <create-portfolio-modal v-if="isCreateModalVisible" 
-                            @close-modal="closeModal()"></create-portfolio-modal>
+    <create-portfolio-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-portfolio-modal>
 
-    <edit-portfolio-modal v-if="isEditModalVisible"
-                      @close-modal="closeModal"
-                      :portfolio="portfolioObjectToUpdate"
-                      @handle-edit="handleEdit"></edit-portfolio-modal>
+    <edit-portfolio-modal v-if="isEditModalVisible" @close-modal="closeModal" :portfolio="portfolioObjectToUpdate"
+        @handle-edit="handleEdit"></edit-portfolio-modal>
 
 
-    <confirm-delete-modal v-if="isDeleteModalVisible" 
-                        :entity-type="ENTIRY_TYPE" 
-                        :entity-id="entityId" 
-                        @close-modal="closeModal"
-                        @handle-delete="handleDelete">
+    <confirm-delete-modal v-if="isDeleteModalVisible" :entity-type="ENTIRY_TYPE" :entity-id="entityId"
+        @close-modal="closeModal" @handle-delete="handleDelete">
 
     </confirm-delete-modal>
     <div>
@@ -39,7 +33,7 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.portfolio_type }}</td>
-                    <td class="table-actions"> 
+                    <td class="table-actions">
                         <span>
                             <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon" />
                         </span>
@@ -74,7 +68,7 @@ import { useStore } from 'vuex';
 import router from '@/router';
 import { iPortfolio } from '@/models/iPortfolio';
 
-export default defineComponent ({
+export default defineComponent({
 
     components: {
         Edit_Icon,
@@ -83,10 +77,10 @@ export default defineComponent ({
         EditPortfolioModal,
         CreatePortfolioModal,
         ConfirmDeleteModal
-        
+
     },
 
-    setup () {
+    setup() {
         const store = useStore();
 
         // For deletion
@@ -98,7 +92,7 @@ export default defineComponent ({
         const isEditModalVisible = ref(false);
         const isDeleteModalVisible = ref(false);
 
-        const openDetails = (item: iPortfolio ) => {
+        const openDetails = (item: iPortfolio) => {
             let id = item.id;
             setDataForDetailsPage(item);
 
@@ -116,9 +110,9 @@ export default defineComponent ({
         const portfolioIdToUpdate = ref('')
         const portfolioObjectToUpdate = ref();
 
-        const allPortfolios = computed( () => {
+        const allPortfolios = computed(() => {
             let data = store.getters['portfolioManagement/getPortfolios']
-            if(!data) return
+            if (!data) return
             return data;
         })
 
@@ -128,7 +122,7 @@ export default defineComponent ({
 
         const openEditModal = (id: string) => {
             portfolioIdToUpdate.value = id;
-            portfolioObjectToUpdate.value = toRaw(allPortfolios.value).find((x:any ) => x.id === id);
+            portfolioObjectToUpdate.value = toRaw(allPortfolios.value).find((x: any) => x.id === id);
             isEditModalVisible.value = true;
         }
 
@@ -158,18 +152,18 @@ export default defineComponent ({
             let id = portfolioIdToUpdate.value;
 
             editRecordInPortfolios(portfolioIdToUpdate.value, editedPortfolio)
-            .then( () => {
-                closeModal();
-                store.dispatch('portfolioManagement/updatePortfolio', {editedPortfolio, id})
-                portfolioIdToUpdate.value = '';
-            })
+                .then(() => {
+                    closeModal();
+                    store.dispatch('portfolioManagement/updatePortfolio', { editedPortfolio, id })
+                    portfolioIdToUpdate.value = '';
+                })
         }
 
         const handleDelete = () => {
             isDeleteModalVisible.value = false;
-            deleteRecordInPortfolios(portfolioIdToDelete.value).then( () => {
-                return store.dispatch('portfolioManagement/deletePortfolio',portfolioIdToUpdate.value)
-            }).catch( (error) => {
+            deleteRecordInPortfolios(portfolioIdToDelete.value).then(() => {
+                return store.dispatch('portfolioManagement/deletePortfolio', portfolioIdToUpdate.value)
+            }).catch((error) => {
                 console.log(error);
             })
 
@@ -182,7 +176,7 @@ export default defineComponent ({
         }
 
 
-        onMounted( () => {
+        onMounted(() => {
             updateList();
         })
 
@@ -203,10 +197,10 @@ export default defineComponent ({
             openCreateModal,
             openEditModal,
             openDeleteModal,
-            
+
             openDetails,
             updateList
-            
+
         }
 
     }

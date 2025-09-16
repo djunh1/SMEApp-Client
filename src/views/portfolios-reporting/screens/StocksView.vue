@@ -9,22 +9,17 @@
         </button>
     </header>
 
-    <create-stock-modal v-if="isCreateModalVisible" 
-                         @close-modal="closeModal()"></create-stock-modal>
+    <create-stock-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-stock-modal>
 
-    <edit-stock-modal v-if="isEditModalVisible"
-                      @close-modal="closeModal"
-                      :stock="stockObjToUpdate"
-                      @handle-edit="handleEdit"></edit-stock-modal>
+    <edit-stock-modal v-if="isEditModalVisible" @close-modal="closeModal" :stock="stockObjToUpdate"
+        @handle-edit="handleEdit"></edit-stock-modal>
 
 
-    <confirm-delete-modal v-if="isDeleteModalVisible" 
-                    :entity-type="ENTIRY_TYPE" 
-                    :entity-id="entityId" @close-modal="closeModal"
-                    @handle-delete="handleDelete">
+    <confirm-delete-modal v-if="isDeleteModalVisible" :entity-type="ENTIRY_TYPE" :entity-id="entityId"
+        @close-modal="closeModal" @handle-delete="handleDelete">
     </confirm-delete-modal>
 
-    <div>    
+    <div>
         <table>
             <thead>
                 <tr>
@@ -46,14 +41,12 @@
                     <td>{{ formatDate(item.created_at) }}</td>
                     <td>{{ item.portfolio.name }}</td>
                     <td class="table-actions">{{ item.portfolio.portfolio_type }}</td>
-                    <td> 
+                    <td>
                         <span>
                             <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon__left" />
                         </span>
                         <span>
-                            <Trash_Icon @click.stop 
-                                        @click="openDeleteModal(item.id)"
-                                        class="table_icon__left" />
+                            <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="table_icon__left" />
                         </span>
                     </td>
                 </tr>
@@ -80,7 +73,7 @@ import { useStore } from 'vuex';
 import { iStock } from '@/models/iStock';
 import router from '@/router';
 
-export default defineComponent ({
+export default defineComponent({
 
     components: {
         Edit_Icon,
@@ -91,23 +84,23 @@ export default defineComponent ({
         ConfirmDeleteModal
     },
 
-    setup () {
+    setup() {
         const store = useStore();
 
         const ENTIRY_TYPE = 'stock'
         const entityId = ref();
-        const stockIdToDelete = ref ('')
+        const stockIdToDelete = ref('')
 
         const isCreateModalVisible = ref(false)
         const isEditModalVisible = ref(false);
         const isDeleteModalVisible = ref(false);
- 
+
 
         const stockIdToUpdate = ref()
         const stockObjToUpdate = ref()
-        const allStocks = computed( () => {
+        const allStocks = computed(() => {
             let data = store.getters['stockManagement/getStocks']
-            if(!data) return
+            if (!data) return
             return data
         })
 
@@ -117,7 +110,7 @@ export default defineComponent ({
 
         const openEditModal = (id: string) => {
             stockIdToUpdate.value = id;
-            stockObjToUpdate.value = toRaw(allStocks.value).find((x:any ) => x.id === id);
+            stockObjToUpdate.value = toRaw(allStocks.value).find((x: any) => x.id === id);
             isEditModalVisible.value = true;
         }
 
@@ -132,7 +125,7 @@ export default defineComponent ({
             isEditModalVisible.value = false;
         }
 
-       
+
         const updateList = async () => {
             return Promise.allSettled([
                 store.dispatch('stockManagement/setStocks', {})
@@ -142,26 +135,26 @@ export default defineComponent ({
         const handleEdit = (editedStock: any) => {
             isEditModalVisible.value = false;
             let id = stockIdToUpdate.value;
-            
+
             editRecordInStocks(stockIdToUpdate.value, editedStock)
-            .then( () => {
-                closeModal();
+                .then(() => {
+                    closeModal();
 
-                store.dispatch('stockManagement/updateStock', 
-                {editedStock, id})
+                    store.dispatch('stockManagement/updateStock',
+                        { editedStock, id })
 
-                stockIdToUpdate.value = '';
-            })
+                    stockIdToUpdate.value = '';
+                })
         }
 
         const handleDelete = () => {
             isDeleteModalVisible.value = false;
             deleteRecordInStocks(stockIdToDelete.value)
-            .then( () => {
-                return store.dispatch('stockManagement/deleteStock', stockIdToDelete.value)
-            }).catch( (error) => {
-                console.log(error);
-            })
+                .then(() => {
+                    return store.dispatch('stockManagement/deleteStock', stockIdToDelete.value)
+                }).catch((error) => {
+                    console.log(error);
+                })
         }
 
         const openDetails = (item: iStock) => {
@@ -185,7 +178,7 @@ export default defineComponent ({
             updateList();
         })
 
-        
+
 
         return {
             entityId,
@@ -208,11 +201,10 @@ export default defineComponent ({
 
     }
 
-    
 
-    
-    
+
+
+
 })
 
 </script>
-

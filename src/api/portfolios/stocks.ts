@@ -24,7 +24,7 @@ export const loadStocks = () => {
 };
 
 // Partial doesnt use all the fields.  
-// TODO can dynamicallhy search for stock comapny name and the sector
+// TODO  dynamicallhy search for stock comapny name and the sector
 export const addNewStock = (newStockRecord: Partial<iStock>) => {
     return new Promise((resolve, reject) => {
         api.post(URLS.stocks,
@@ -49,36 +49,36 @@ export const editRecordInStocks = (id: string, editedStonk: iStock) => {
     return new Promise((resolve, reject) => {
         console.log("The new way to reference an ID ==> ", editedStonk.portfolio!.id)
         api.patch(URLS.stocks + id + '/', {
-                ticker_name: editedStonk.tickerName,
-                portfolio: editedStonk.portfolio!.id,
-            }).then((response: AxiosResponse) => {
+            ticker_name: editedStonk.tickerName,
+            portfolio: editedStonk.portfolio!.id,
+        }).then((response: AxiosResponse) => {
             if (response.status === 200) {
                 resolve(response.data);
             } else {
                 reject();
             }
-            }).catch((error: AxiosError) => {
-                console.log("Error in updating this stocks portfolio," , error)
-            });
+        }).catch((error: AxiosError) => {
+            console.log("Error in updating this stocks portfolio,", error)
+        });
     });
 };
 
 export const getStockDetails = (stockId: string) => {
     return new Promise((resolve, reject) => {
         api
-          .get(URLS.stocks + stockId + "/") //, {}
-          .then((response: AxiosResponse) => {
-    
-            if (response.status === 200) {
-              resolve(response.data);
-            } else {
-              reject();
-            }
-          })
-          .catch((error: AxiosError) => {
-            console.log("caught error in stock details >> ", error);
-          });
-      });
+            .get(URLS.stocks + stockId + "/") //, {}
+            .then((response: AxiosResponse) => {
+
+                if (response.status === 200) {
+                    resolve(response.data);
+                } else {
+                    reject();
+                }
+            })
+            .catch((error: AxiosError) => {
+                console.log("caught error in stock details >> ", error);
+            });
+    });
 }
 
 export const deleteRecordInStocks = (id: string) => {

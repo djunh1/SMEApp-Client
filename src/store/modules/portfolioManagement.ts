@@ -10,23 +10,24 @@ export default {
         SET_PORTFOLIOS(state: GlobalState, context: any) {
             state.portfolios = context;
         },
-        SET_PORTFOLIO_DETAILS(state: GlobalState, context: iPortfolio){
+        SET_PORTFOLIO_DETAILS(state: GlobalState, context: iPortfolio) {
             state.portfolioDetails = context;
         },
-        DELETE_PORTFOLIO(state: GlobalState, context: iPortfolio){
+        DELETE_PORTFOLIO(state: GlobalState, context: iPortfolio) {
             state.portfolios = state.portfolios.filter(x => x.id !== context)
         },
-        UPDATE_PORTFOLIO(state: GlobalState, context: any){
+        UPDATE_PORTFOLIO(state: GlobalState, context: any) {
             // Local record via index in the array
             let index = state.portfolios.findIndex(x => x.id === context.id)
 
-            state.portfolios[index] = { ...state.portfolios[index],
+            state.portfolios[index] = {
+                ...state.portfolios[index],
                 name: context.editedPortfolio.name,
                 description: context.editedPortfolio.description,
                 portfolio_type: context.editedPortfolio.portfolioType
             }
         },
-        POST_PORTFOLIO(state: GlobalState, context: any){
+        POST_PORTFOLIO(state: GlobalState, context: any) {
             state.portfolios.unshift(context.responseObject);
         }
     },
@@ -38,17 +39,17 @@ export default {
             commit("SET_PORTFOLIOS", data);
             return data;
         },
-        async setPortfolioDetails({commit}: {commit: Commit}, payload: iPortfolio){
+        async setPortfolioDetails({ commit }: { commit: Commit }, payload: iPortfolio) {
             commit("SET_PORTFOLIO_DETAILS", payload)
         },
-        async deletePortfolio({commit}: {commit: Commit}, payload: iPortfolio){
+        async deletePortfolio({ commit }: { commit: Commit }, payload: iPortfolio) {
             commit("DELETE_PORTFOLIO", payload)
         },
-        async updatePortfolio({commit}: {commit: Commit}, payload: any){
+        async updatePortfolio({ commit }: { commit: Commit }, payload: any) {
             commit("UPDATE_PORTFOLIO", payload)
         },
 
-        async postPortfolio({commit}: {commit: Commit}, payload: any){
+        async postPortfolio({ commit }: { commit: Commit }, payload: any) {
             commit('POST_PORTFOLIO', payload)
         }
     },
@@ -58,7 +59,7 @@ export default {
             return state.portfolios;
         },
 
-        getPortfolioDetails(state: GlobalState){
+        getPortfolioDetails(state: GlobalState) {
             return state.portfolioDetails;
         }
     }

@@ -9,23 +9,24 @@ export default {
         SET_STOCKS(state: GlobalState, context: any) {
             state.stocks = context;
         },
-        SET_STOCK_DETAILS(state: GlobalState, context: iStock){
+        SET_STOCK_DETAILS(state: GlobalState, context: iStock) {
             state.stockDetails = context;
         },
-        DELETE_STOCK(state: GlobalState, context: iStock){
+        DELETE_STOCK(state: GlobalState, context: iStock) {
             state.stocks = state.stocks.filter(x => x.id !== context)
         },
-        UPDATE_STOCK(state: GlobalState, context: any){
+        UPDATE_STOCK(state: GlobalState, context: any) {
             let index = state.stocks.findIndex(x => x.id === context.id)
 
             console.log(context)
 
-            state.stocks[index] = { ...state.stocks[index],
+            state.stocks[index] = {
+                ...state.stocks[index],
                 ticker_name: context.editedStock.tickerName,
                 portfolio: context.editedStock.portfolio,
             }
         },
-        POST_STOCK(state: GlobalState, context: any){
+        POST_STOCK(state: GlobalState, context: any) {
             // Where does response object come from?
             state.stocks.unshift(context.responseObject)
         }
@@ -33,21 +34,21 @@ export default {
 
     },
     actions: {
-        async setStocks( {commit}: {commit: Commit}, payload: any) {
+        async setStocks({ commit }: { commit: Commit }, payload: any) {
             let data = await loadStocks();
             commit('SET_STOCKS', data);
             return data
         },
-        async setStockDetails({commit}: {commit: Commit}, payload: iStock) {
+        async setStockDetails({ commit }: { commit: Commit }, payload: iStock) {
             commit("SET_STOCK_DETAILS");
         },
-        async deleteStock({commit}: {commit: Commit}, payload: iStock){
+        async deleteStock({ commit }: { commit: Commit }, payload: iStock) {
             commit("DELETE_STOCK", payload)
         },
-        async updateStock({commit}: {commit: Commit}, payload: any){
+        async updateStock({ commit }: { commit: Commit }, payload: any) {
             commit("UPDATE_STOCK", payload)
         },
-        async postStock({commit}: {commit: Commit}, payload: any){
+        async postStock({ commit }: { commit: Commit }, payload: any) {
             commit("POST_STOCK", payload)
         }
 

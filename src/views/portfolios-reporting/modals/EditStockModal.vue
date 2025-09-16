@@ -18,9 +18,6 @@
             </label>
 
             <input type="text" v-model="tickerName">
-
-
-
             <select v-model="portfolioIdtoUpdate">
                 <option value="" disabled selected>{{ presentPortfolio.name }}</option>
                 <option v-for="portfolio in portfolios" :key="portfolio.id" :value="portfolio.id">
@@ -88,7 +85,6 @@ export default defineComponent({
         }
 
         watch(
-
             () => [portfolioIdtoUpdate.value, tickerName.value],
             () => {
                 if ((presentPortfolio.id !== portfolioIdtoUpdate.value) && tickerName.value !== '') {

@@ -1,4 +1,4 @@
-<template >
+<template>
   <modal @close="closeModal">
     <div class="modal-content">
       <div class="header">
@@ -7,38 +7,36 @@
           <Close_Icon class="icon" @click="closeModal()"></Close_Icon>
         </div>
       </div>
-    
 
-        <label>
+
+      <label>
         <strong>
-            <small> Enter Ticker <span class="validation-mark">*</span></small>
+          <small> Enter Ticker <span class="validation-mark">*</span></small>
         </strong>
-        </label>
+      </label>
 
-        <input type="text" v-model="stockTicker"></input>
+      <input type="text" v-model="stockTicker"></input>
 
 
-        <label>
+      <label>
         <strong>
-            <small> Portfolio ID <span class="validation-mark">*</span></small>
+          <small> Portfolio ID <span class="validation-mark">*</span></small>
         </strong>
-        </label>
+      </label>
 
-        <select v-model="portfolioId">
-          <option value="">Select your portfolio</option>
-          <option v-for="portfolio in portfolios" 
-                  :key="portfolio.id"
-                  :value="portfolio.id">
-                  {{ portfolio.name }} ({{ portfolio.portfolio_type }})
-          </option>
-        </select>
+      <select v-model="portfolioId">
+        <option value="">Select your portfolio</option>
+        <option v-for="portfolio in portfolios" :key="portfolio.id" :value="portfolio.id">
+          {{ portfolio.name }} ({{ portfolio.portfolio_type }})
+        </option>
+      </select>
 
-        <div class="footer">
-            <div class="content">
-                <button class="cancel" @click="closeModal()">Cancel</button>
-                <button :disabled="!buttenEnabled" class="confirm" @click="addNewRecord()">Add Ticker</button>
-            </div>
+      <div class="footer">
+        <div class="content">
+          <button class="cancel" @click="closeModal()">Cancel</button>
+          <button :disabled="!buttenEnabled" class="confirm" @click="addNewRecord()">Add Ticker</button>
         </div>
+      </div>
     </div>
 
   </modal>
@@ -56,16 +54,16 @@ import { addNewStock } from "@/api/portfolios/stocks";
 import { useStore } from "vuex";
 
 export default defineComponent({
-    components: {
+  components: {
     Modal,
     Close_Icon
-},
+  },
 
-emits: ['close-modal'],
+  emits: ['close-modal'],
 
-setup(_, context) {
+  setup(_, context) {
     const stockTicker = ref('');
-    const portfolioId = ref('') 
+    const portfolioId = ref('')
 
     const portfolios = ref();
     const buttenEnabled = ref();
@@ -77,16 +75,16 @@ setup(_, context) {
       portfolios.value = await loadPortfolios();
     }
 
-    watch( () => [stockTicker.value, portfolioId.value], 
-    () => {
-      if(stockTicker.value === '' || portfolioId.value === ''){
-        buttenEnabled.value = false
-      } else {
-        buttenEnabled.value = true
-      }
+    watch(() => [stockTicker.value, portfolioId.value],
+      () => {
+        if (stockTicker.value === '' || portfolioId.value === '') {
+          buttenEnabled.value = false
+        } else {
+          buttenEnabled.value = true
+        }
 
-    }
-  )
+      }
+    )
 
     const addNewRecord = () => {
       let newStockRecord: Partial<iStock> = {};
@@ -102,21 +100,21 @@ setup(_, context) {
     }
 
     const closeModal = () => {
-        context.emit('close-modal');
+      context.emit('close-modal');
     }
 
-    onBeforeMount( () => {
+    onBeforeMount(() => {
       getPortfolios();
     })
 
     return {
-        buttenEnabled,
-        portfolioId,
-        stockTicker,
+      buttenEnabled,
+      portfolioId,
+      stockTicker,
 
-        portfolios, 
-        addNewRecord,
-        closeModal
+      portfolios,
+      addNewRecord,
+      closeModal
     };
   },
 

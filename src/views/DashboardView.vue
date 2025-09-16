@@ -9,9 +9,10 @@
             <nav>
                 <section class="nav-section">
                     <div class="section-title">Main</div>
-                    <section :class="{'is-toggled': toggledViews.includes('portfolios-reporting')}">
+                    <section :class="{ 'is-toggled': toggledViews.includes('portfolios-reporting') }">
                         <a href="#" @click.prevent="toggleViews('portfolios-reporting')">
-                            <Home_Icon class="nav_icon" :color="colorKey === 'portfolios-reporting' ? activeColor: baseColor" />
+                            <Home_Icon class="nav_icon"
+                                :color="colorKey === 'portfolios-reporting' ? activeColor : baseColor" />
                             <span>Portfolios</span>
                             <MenuToggle_Icon class="menuToggle" />
                         </a>
@@ -24,9 +25,10 @@
                             </router-link>
                         </div>
                     </section>
-                    <section :class="{'is-toggled': toggledViews.includes('user-profiles')}">
+                    <section :class="{ 'is-toggled': toggledViews.includes('user-profiles') }">
                         <a href="#" @click.prevent="toggleViews('user-profiles')">
-                            <Customers_Icon class="nav_icon" :color="colorKey === 'user-profiles' ? activeColor: baseColor" />
+                            <Customers_Icon class="nav_icon"
+                                :color="colorKey === 'user-profiles' ? activeColor : baseColor" />
                             <span>Investors</span>
                             <MenuToggle_Icon class="menuToggle" />
                         </a>
@@ -75,16 +77,16 @@ export default defineComponent({
         )
 
         const toggleViews = (key: string) => {
-            if(toggledViews.value[0] === key){
-                toggledViews.value=['']
-                colorKey.value=''
+            if (toggledViews.value[0] === key) {
+                toggledViews.value = ['']
+                colorKey.value = ''
             } else {
                 toggledViews.value = [key]
                 colorKey.value = key
             }
             toggledViews.value = [key]
         }
-        
+
 
         return {
             route,

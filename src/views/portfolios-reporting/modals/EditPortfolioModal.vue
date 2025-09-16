@@ -1,5 +1,5 @@
 <template>
-      <modal @close="closeModal">
+  <modal @close="closeModal">
     <div class="modal-content">
       <div class="header">
         <div class="content">
@@ -38,8 +38,7 @@
       <div class="footer">
         <div class="content">
           <button @click="closeModal()" class="cancel">Cancel</button>
-          <button :disabled="btnDisabled" class="confirm" 
-                  @click="handleUpdatePortfolio()">Update</button>
+          <button :disabled="btnDisabled" class="confirm" @click="handleUpdatePortfolio()">Update</button>
         </div>
       </div>
 
@@ -59,81 +58,81 @@ import { iPortfolio } from '@/models/iPortfolio';
 
 
 export default defineComponent({
-    components: {
-        Close_Icon,
-        Modal
-    },
-    props: {
-        portfolio: {
-            type: Object,
-            required: true
-        }
-    },
-    emits: [
-        'close-modal',
-        'handle-edit'
-    ],
-
-    setup(props, context){
-
-        const btnDisabled = ref(true)
-
-        const portfolio = ref(props.portfolio)
-
-        const portfolioName = ref(portfolio.value.name)
-        const description = ref(portfolio.value.description)
-        const portfolioType = ref(portfolio.value.portfolio_type)
-        const portfolioTypes = ref(['Long Term', 'Swing', 'Variable', 'Day Trading']);
-
-        const closeModal = () => {
-            context.emit('close-modal');
-        }
-
-        const editPortfolio = (editedPortfolio: Partial<iPortfolio>) => {
-            context.emit('handle-edit', editedPortfolio);
-        } 
-
-        watch(
-          
-            () => [portfolioName.value, description.value, portfolioType.value],
-            () => {
-                if ((portfolioName.value !== '' 
-                    && description.value !== '' 
-                    && portfolioType.value !== '')
-                    &&
-                    ( portfolioName.value !== portfolio.value.name 
-                    || description.value !== portfolio.value.description 
-                    || portfolioType.value !== portfolio.value.portfolio_type )
-                ) {
-                    btnDisabled.value = false;
-                }
-                else {
-                    btnDisabled.value = true;
-                }
-            },
-        );
-
-        const handleUpdatePortfolio = () => {
-        
-            let editedPortfolio: Partial<iPortfolio> = {
-                name: portfolioName.value,
-                description: description.value,
-                portfolioType: portfolioType.value
-            }
-            editPortfolio(editedPortfolio)
-        }
-        return {
-            btnDisabled,
-            portfolioName,
-            description,
-            portfolioType,
-            portfolioTypes,
-
-            closeModal,
-            handleUpdatePortfolio
-
-        }
+  components: {
+    Close_Icon,
+    Modal
+  },
+  props: {
+    portfolio: {
+      type: Object,
+      required: true
     }
+  },
+  emits: [
+    'close-modal',
+    'handle-edit'
+  ],
+
+  setup(props, context) {
+
+    const btnDisabled = ref(true)
+
+    const portfolio = ref(props.portfolio)
+
+    const portfolioName = ref(portfolio.value.name)
+    const description = ref(portfolio.value.description)
+    const portfolioType = ref(portfolio.value.portfolio_type)
+    const portfolioTypes = ref(['Long Term', 'Swing', 'Variable', 'Day Trading']);
+
+    const closeModal = () => {
+      context.emit('close-modal');
+    }
+
+    const editPortfolio = (editedPortfolio: Partial<iPortfolio>) => {
+      context.emit('handle-edit', editedPortfolio);
+    }
+
+    watch(
+
+      () => [portfolioName.value, description.value, portfolioType.value],
+      () => {
+        if ((portfolioName.value !== ''
+          && description.value !== ''
+          && portfolioType.value !== '')
+          &&
+          (portfolioName.value !== portfolio.value.name
+            || description.value !== portfolio.value.description
+            || portfolioType.value !== portfolio.value.portfolio_type)
+        ) {
+          btnDisabled.value = false;
+        }
+        else {
+          btnDisabled.value = true;
+        }
+      },
+    );
+
+    const handleUpdatePortfolio = () => {
+
+      let editedPortfolio: Partial<iPortfolio> = {
+        name: portfolioName.value,
+        description: description.value,
+        portfolioType: portfolioType.value
+      }
+      editPortfolio(editedPortfolio)
+    }
+    return {
+      btnDisabled,
+      portfolioName,
+      description,
+      portfolioType,
+      portfolioTypes,
+
+      closeModal,
+      handleUpdatePortfolio
+
+    }
+  }
 });
 
 </script>
