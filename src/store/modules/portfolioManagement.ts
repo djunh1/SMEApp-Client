@@ -24,7 +24,7 @@ export default {
                 ...state.portfolios[index],
                 name: context.editedPortfolio.name,
                 description: context.editedPortfolio.description,
-                portfolio_type: context.editedPortfolio.portfolioType
+                category: context.editedPortfolio.category
             }
         },
         POST_PORTFOLIO(state: GlobalState, context: any) {

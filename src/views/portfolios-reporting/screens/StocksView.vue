@@ -28,7 +28,6 @@
                     <th>Sector</th>
                     <th>Added on</th>
                     <th>Portfolio name</th>
-                    <th>Portfolio type</th>
                     <th>Action Jackson</th>
 
                 </tr>
@@ -40,7 +39,6 @@
                     <td>{{ item.sector }}</td>
                     <td>{{ formatDate(item.created_at) }}</td>
                     <td>{{ item.portfolio.name }}</td>
-                    <td class="table-actions">{{ item.portfolio.portfolio_type }}</td>
                     <td>
                         <span>
                             <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon__left" />

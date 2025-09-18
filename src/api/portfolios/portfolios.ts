@@ -13,7 +13,7 @@ export const loadPortfolios = () => {
         api.get(URLS.portfolios)
             .then((response: AxiosResponse) => {
                 if (response.status === 200) {
-                    resolve(response.data);
+                    resolve(response.data.results);
                 } else {
                     reject();
                 }
@@ -26,11 +26,12 @@ export const loadPortfolios = () => {
 
 export const addNewPortfolio = (newPortfolioRecord: Partial<iPortfolio>) => {
     return new Promise((resolve, reject) => {
+        console.log(newPortfolioRecord);
         api.post(URLS.portfolios,
             {
                 name: newPortfolioRecord.name,
                 description: newPortfolioRecord.description,
-                portfolio_type: newPortfolioRecord.portfolioType
+                category: newPortfolioRecord.categoryId,
             }).then((response: AxiosResponse) => {
                 if (response.status === 201) {
                     // something to do with the ID on a post...
@@ -49,7 +50,7 @@ export const editRecordInPortfolios = (id: string, editedPortfolio: iPortfolio) 
         api.patch(URLS.portfolios + id + '/', {
             name: editedPortfolio.name,
             description: editedPortfolio.description,
-            portfolio_type: editedPortfolio.portfolioType
+            category: editedPortfolio.categoryId
         }).then((response: AxiosResponse) => {
             if (response.status === 200) {
                 resolve(response.data);

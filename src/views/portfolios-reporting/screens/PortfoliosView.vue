@@ -9,6 +9,36 @@
         </button>
     </header>
 
+    <div class="filters">
+        <div class="filter-wrapper">
+            <p>Portfolio Name</p>
+            <select name="" id="">
+                <option value="" disabled selected>All Portfolios (eventually MY portfolios)</option>
+            </select>
+        </div>
+        <div class="filter-wrapper">
+            <p>Portfolio Type</p>
+            <select name="" id="">
+                <option value="" disabled selected>All types</option>
+            </select>
+        </div>
+        <div class="filter-wrapper">
+            <p>Search</p>
+            <input type="text" placeholder="Search by name of by portfolio type"></input>
+        </div>
+
+         <div class="filter-wrapper">
+            <p>Filter</p>
+            <button id="filter" class="filters_button">Filter</button>
+        </div>
+
+        <div class="filter-wrapper">
+            <p>Refresh</p>
+            <button id="refresh" class="filters_button">Refresh</button>
+        </div>
+         
+    </div>
+
     <create-portfolio-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-portfolio-modal>
 
     <edit-portfolio-modal v-if="isEditModalVisible" @close-modal="closeModal" :portfolio="portfolioObjectToUpdate"
@@ -23,16 +53,16 @@
         <table>
             <thead>
                 <tr>
-                    <th>Portfolio Name</th>
+                    <th>Name</th>
+                    <th>About</th>
                     <th>Type</th>
-                    <th>Info</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(item, i) in allPortfolios" :key="i" @click="openDetails(item)">
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
-                    <td>{{ item.portfolio_type }}</td>
+                    <td>{{ item.category?.name ?? 'None' }}</td>
                     <td class="table-actions">
                         <span>
                             <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon" />
@@ -77,7 +107,6 @@ export default defineComponent({
         EditPortfolioModal,
         CreatePortfolioModal,
         ConfirmDeleteModal
-
     },
 
     setup() {
@@ -113,6 +142,7 @@ export default defineComponent({
         const allPortfolios = computed(() => {
             let data = store.getters['portfolioManagement/getPortfolios']
             if (!data) return
+            console.log(data);
             return data;
         })
 

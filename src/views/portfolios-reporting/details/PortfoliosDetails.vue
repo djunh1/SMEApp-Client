@@ -20,7 +20,7 @@
 
         <div class="details-content">
             <h4 class="details-label">Portfolio type:</h4>
-            <p class="details-input-desc">{{ portfolioType }}</p>
+            <p class="details-input-desc">{{ categoryInfo?.name ?? 'None' }}</p>
             <hr>
         </div>
 
@@ -57,7 +57,7 @@ export default defineComponent({
         const createdAt = ref('')
         const name = ref('')
         const description = ref('')
-        const portfolioType = ref('')
+        const categoryInfo = ref('')
 
         const passedID = computed(() => {
             return route.params.id ? route.params.id as string : ''
@@ -77,9 +77,8 @@ export default defineComponent({
             name.value = details.name
             description.value = details.description;
             createdAt.value = formatDate(details.created_at);
-            portfolioType.value = details.portfolio_type
-
-
+            console.log(details.category);
+            categoryInfo.value =  details.category; 
         }
 
         onBeforeMount(() => {
@@ -90,7 +89,7 @@ export default defineComponent({
             createdAt,
             name,
             description,
-            portfolioType
+            categoryInfo
         }
     }
 })

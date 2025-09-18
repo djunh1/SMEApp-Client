@@ -27,7 +27,7 @@
       <select v-model="portfolioId">
         <option value="">Select your portfolio</option>
         <option v-for="portfolio in portfolios" :key="portfolio.id" :value="portfolio.id">
-          {{ portfolio.name }} ({{ portfolio.portfolio_type }})
+          {{ portfolio.name }}
         </option>
       </select>
 
@@ -47,7 +47,7 @@
 import Modal from "@/components/common/Modal.vue";
 import Close_Icon from "@/assets/icons/Close_Icon.vue";
 import { defineComponent, onBeforeMount, ref, watch } from "vue";
-import { loadPortfolios } from "@/api/portfolios/portfolios";
+import { loadPortfolios } from "@/api/common/portfolios";
 import { iStock } from "@/models/iStock";
 import { addNewStock } from "@/api/portfolios/stocks";
 

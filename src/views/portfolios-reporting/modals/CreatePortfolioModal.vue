@@ -29,11 +29,13 @@
         </strong>
       </label>
 
-      <select v-model="portfolio_type">
+      <select v-model="categoryId">
         <option value="">Select portfolio type</option>
-        <option v-for="type in portfolioTypes" :key="type" :value="type">
-          {{ type }}
-        </option>
+        <option v-for="category in categories" 
+                :key="category.id" 
+                :value="category.id">
+                {{ category.name }}
+          </option>
       </select>
 
       <div class="footer">
@@ -57,6 +59,7 @@ import { iPortfolio } from "@/models/iPortfolio";
 import { addNewPortfolio } from "@/api/portfolios/portfolios";
 
 import { useStore } from "vuex";
+import { loadCategories } from "@/api/common/categories";
 
 export default defineComponent({
   components: {
@@ -71,23 +74,29 @@ export default defineComponent({
     const buttenEnabled = ref(false)
     const portfolioName = ref();
     const description = ref();
-    const portfolio_type = ref();
-    const portfolioTypes = ref(['Long Term', 'Swing', 'Variable', 'Day Trading']);
+    const categoryId = ref('');
+
+    // Foreign keys
+    const categories = ref()
 
     const store = useStore();
     watch(() => [portfolioName.value,
     description.value,
-    portfolio_type.value],
+    categoryId.value],
       () => {
         if (portfolioName.value === ''
           || description.value === ''
-          || portfolio_type.value === '') {
+          || categoryId.value === '') {
           buttenEnabled.value = false
         } else {
           buttenEnabled.value = true
         }
       }
     )
+
+     const getCategories = async () => {
+            categories.value = await loadCategories();
+      };
 
     const closeModal = () => {
       context.emit('close-modal');
@@ -98,7 +107,7 @@ export default defineComponent({
 
       newPortfolioRecord.name = portfolioName.value;
       newPortfolioRecord.description = description.value;
-      newPortfolioRecord.portfolioType = portfolio_type.value;
+      newPortfolioRecord.categoryId = categoryId.value;
 
       addNewPortfolio(newPortfolioRecord).then((responseObject) => {
         store.dispatch('portfolioManagement/postPortfolio', { responseObject })
@@ -109,14 +118,19 @@ export default defineComponent({
       })
     }
 
+    onBeforeMount(() => {
+            getCategories();
+
+        })
+
 
 
     return {
       buttenEnabled,
       portfolioName,
       description,
-      portfolio_type,
-      portfolioTypes,
+      categories,
+      categoryId,
 
       addNewRecord,
       closeModal

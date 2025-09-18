@@ -29,10 +29,13 @@
         </strong>
       </label>
 
-      <select v-model="portfolioType">
-        <option v-for="type in portfolioTypes" :key="type" :value="type">
-          {{ type }}
-        </option>
+       <select v-model="categoryId">
+        <option value="">Select portfolio type</option>
+        <option v-for="category in categories" 
+                :key="category.id" 
+                :value="category.id">
+                {{ category.name }}
+          </option>
       </select>
 
       <div class="footer">
@@ -51,10 +54,11 @@
 
 <script lang="ts">
 
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, onBeforeMount, ref, watch } from 'vue';
 import Modal from '@/components/common/Modal.vue';
 import Close_Icon from '@/assets/icons/Close_Icon.vue';
 import { iPortfolio } from '@/models/iPortfolio';
+import { loadCategories } from '@/api/common/categories';
 
 
 export default defineComponent({
@@ -81,8 +85,11 @@ export default defineComponent({
 
     const portfolioName = ref(portfolio.value.name)
     const description = ref(portfolio.value.description)
-    const portfolioType = ref(portfolio.value.portfolio_type)
-    const portfolioTypes = ref(['Long Term', 'Swing', 'Variable', 'Day Trading']);
+    //const category = ref(portfolio.value.category.name)
+    const categoryId = ref('');
+    
+    // Foreign keys
+    const categories = ref()
 
     const closeModal = () => {
       context.emit('close-modal');
@@ -92,17 +99,21 @@ export default defineComponent({
       context.emit('handle-edit', editedPortfolio);
     }
 
+    const getCategories = async () => {
+            categories.value = await loadCategories();
+      };
+
     watch(
 
-      () => [portfolioName.value, description.value, portfolioType.value],
+      () => [portfolioName.value, description.value, categoryId.value],
       () => {
         if ((portfolioName.value !== ''
           && description.value !== ''
-          && portfolioType.value !== '')
+          && categoryId.value !== '')
           &&
           (portfolioName.value !== portfolio.value.name
             || description.value !== portfolio.value.description
-            || portfolioType.value !== portfolio.value.portfolio_type)
+            || categoryId.value !== portfolio.value.categoryId)
         ) {
           btnDisabled.value = false;
         }
@@ -112,21 +123,29 @@ export default defineComponent({
       },
     );
 
+    
+
     const handleUpdatePortfolio = () => {
 
       let editedPortfolio: Partial<iPortfolio> = {
         name: portfolioName.value,
         description: description.value,
-        portfolioType: portfolioType.value
+        categoryId: categoryId.value
       }
       editPortfolio(editedPortfolio)
     }
+
+    onBeforeMount(() => {
+          getCategories();
+
+     })
     return {
       btnDisabled,
       portfolioName,
       description,
-      portfolioType,
-      portfolioTypes,
+      categoryId,
+      categories,
+
 
       closeModal,
       handleUpdatePortfolio
