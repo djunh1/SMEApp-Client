@@ -13,3 +13,10 @@ export const extractValues = (data: any) => {
   });
   return names;
 };
+
+export const extractIds = (data: any) => {
+  var ids = data.map((item: any) => {
+    return item[String(Object.keys(item))];
+  });
+  return ids;
+};

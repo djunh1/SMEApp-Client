@@ -37,7 +37,7 @@
                 {{ category.name }}
           </option>
       </select>
-
+  
       <div class="footer">
         <div class="content">
           <button @click="closeModal()" class="cancel">Cancel</button>

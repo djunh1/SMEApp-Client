@@ -13,28 +13,35 @@
         <div class="filter-wrapper">
             <p>Portfolio Name</p>
             <select name="" id="">
-                <option value="" disabled selected>All Portfolios (eventually MY portfolios)</option>
+                <option value="" disabled selected>All Portfolios (eventually users portfolios)</option>
             </select>
         </div>
-        <div class="filter-wrapper">
-            <p>Portfolio Type</p>
-            <select name="" id="">
-                <option value="" disabled selected>All types</option>
-            </select>
-        </div>
-        <div class="filter-wrapper">
+            <div class="filter-wrapper">
+                <p>Portfolio Category: </p>
+                <select v-model="search">
+                    <option value="" disabled selected>All categories</option>
+                    <option v-for="(cat, i) in categories" :key="i" :value="cat">
+                        {{ cat }}</option>
+    
+                </select>
+            </div>
+        <!-- <div class="filter-wrapper">
             <p>Search</p>
-            <input type="text" placeholder="Search by name of by portfolio type"></input>
-        </div>
+            <input v-model="search"
+                   type="text" 
+                   placeholder="Search by name of by portfolio type"
+                   @keyup.enter="filterList"></input>
+        </div> -->
 
          <div class="filter-wrapper">
             <p>Filter</p>
-            <button id="filter" class="filters_button">Filter</button>
+            <button id="filter" class="filters_button" @click="filterList">Filter</button>
         </div>
 
         <div class="filter-wrapper">
             <p>Refresh</p>
-            <button id="refresh" class="filters_button">Refresh</button>
+            <button id="refresh" class="filters_button"
+            @click="refreshList">Refresh</button>
         </div>
          
     </div>
@@ -97,6 +104,8 @@ import { useStore } from 'vuex';
 
 import router from '@/router';
 import { iPortfolio } from '@/models/iPortfolio';
+import { loadCategories, loadCategoriesUnPaged } from '@/api/common/categories';
+import { extractValues, extractIds } from '@/composables/utils';
 
 export default defineComponent({
 
@@ -121,6 +130,14 @@ export default defineComponent({
         const isEditModalVisible = ref(false);
         const isDeleteModalVisible = ref(false);
 
+        //Searching
+
+        const search = ref ('');
+
+        //Still a search in the back end.  no filtering for portfolios yet
+        const categories = ref('');
+        const filteredCategory = ref('');
+
         const openDetails = (item: iPortfolio) => {
             let id = item.id;
             setDataForDetailsPage(item);
@@ -142,7 +159,6 @@ export default defineComponent({
         const allPortfolios = computed(() => {
             let data = store.getters['portfolioManagement/getPortfolios']
             if (!data) return
-            console.log(data);
             return data;
         })
 
@@ -156,18 +172,38 @@ export default defineComponent({
             isEditModalVisible.value = true;
         }
 
+        // Searching and filtering
+        const filterList = () => {
+            updateList();
+        }
+
+        const refreshList = () => {
+            filteredCategory.value = '';
+            search.value = '';
+            updateList();
+        }
+
+
+
         const openDeleteModal = (id: string) => {
             entityId.value = id;
             isDeleteModalVisible.value = true;
             portfolioIdToDelete.value = id;
         }
 
+        const getCategories = async () => {
+            let data: any = await loadCategoriesUnPaged();      
+            categories.value = extractValues(data);
+            
+        }
+
         const updateList = async () => {
-            // Replace with new state mgmt
-            //allPortfolios.value = await loadPortfolios();
 
             return Promise.allSettled([
-                store.dispatch('portfolioManagement/setPortfolios', {})
+                store.dispatch('portfolioManagement/setPortfolios', {
+                    filteredCategory: filteredCategory.value,
+                    search: search.value
+                })
             ])
         }
 
@@ -208,6 +244,7 @@ export default defineComponent({
 
         onMounted(() => {
             updateList();
+            getCategories();
         })
 
         return {
@@ -216,12 +253,15 @@ export default defineComponent({
             portfolioIdToDelete,
             isDeleteModalVisible,
 
+            filterList,
             handleEdit,
             handleDelete,
             allPortfolios,
             portfolioObjectToUpdate,
             isCreateModalVisible,
             isEditModalVisible,
+            categories,
+            filteredCategory,
 
             closeModal,
             openCreateModal,
@@ -229,6 +269,8 @@ export default defineComponent({
             openDeleteModal,
 
             openDetails,
+            search,
+            refreshList,
             updateList
 
         }

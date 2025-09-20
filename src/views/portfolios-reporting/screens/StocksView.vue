@@ -19,6 +19,38 @@
         @close-modal="closeModal" @handle-delete="handleDelete">
     </confirm-delete-modal>
 
+
+    <!-- Search and filtering-->
+
+       <div class="filters">
+        <div class="filter-wrapper">
+            <p>Portfolio Name</p>
+            <select name="" id="">
+                <option value="" disabled selected>All Portfolios (eventually users portfolios)</option>
+            </select>
+        </div>
+
+        <div class="filter-wrapper">
+            <p>Search</p>
+            <input v-model="search"
+                   type="text" 
+                   placeholder="Search by name of by portfolio"
+                   @keyup.enter="filterList"></input>
+        </div>
+
+         <div class="filter-wrapper">
+            <p>Filter</p>
+            <button id="filter" class="filters_button" @click="filterList">Filter</button>
+        </div>
+
+        <div class="filter-wrapper">
+            <p>Refresh</p>
+            <button id="refresh" class="filters_button"
+            @click="refreshList">Refresh</button>
+        </div>
+         
+    </div>
+
     <div>
         <table>
             <thead>
@@ -96,6 +128,11 @@ export default defineComponent({
 
         const stockIdToUpdate = ref()
         const stockObjToUpdate = ref()
+
+        // Searching
+
+        const search = ref('')
+
         const allStocks = computed(() => {
             let data = store.getters['stockManagement/getStocks']
             if (!data) return
@@ -123,10 +160,23 @@ export default defineComponent({
             isEditModalVisible.value = false;
         }
 
+        //Searching/ filtering
+
+        const filterList = () => {
+            updateList();
+        }
+
+        const refreshList = () => {
+            search.value = '';
+            updateList();
+        }
+
 
         const updateList = async () => {
             return Promise.allSettled([
-                store.dispatch('stockManagement/setStocks', {})
+                store.dispatch('stockManagement/setStocks', {
+                    search: search.value
+                })
             ])
         }
 
@@ -185,6 +235,8 @@ export default defineComponent({
             isCreateModalVisible,
             isDeleteModalVisible,
             isEditModalVisible,
+            refreshList,
+            filterList,
             formatDate,
             openCreateModal,
             handleDelete,
@@ -192,6 +244,8 @@ export default defineComponent({
             closeModal,
             openDeleteModal,
             openEditModal,
+
+            search,
             stockObjToUpdate,
 
             openDetails

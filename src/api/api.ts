@@ -9,7 +9,7 @@ const api = (axios: Axios) => {
     axios.defaults.baseURL = baseURL + '/api/v1'
 
     return {
-        get: <T>(url: string) => axios.get<T>(url),
+        get: <T>(url: string, config: any) => axios.get<T>(url, {...config}),
         post: <T>(url: string, body: object) => axios.post<T>(url, body),
         put: <T>(url: string, body: object) => axios.put<T>(url, body),
         patch: <T>(url: string, body: object) => axios.patch<T>(url, body),

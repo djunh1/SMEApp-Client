@@ -17,9 +17,6 @@ export default {
         },
         UPDATE_STOCK(state: GlobalState, context: any) {
             let index = state.stocks.findIndex(x => x.id === context.id)
-
-            console.log(context)
-
             state.stocks[index] = {
                 ...state.stocks[index],
                 ticker_name: context.editedStock.tickerName,
@@ -35,7 +32,7 @@ export default {
     },
     actions: {
         async setStocks({ commit }: { commit: Commit }, payload: any) {
-            let data = await loadStocks();
+            let data = await loadStocks(payload.search);
             commit('SET_STOCKS', data);
             return data
         },

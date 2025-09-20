@@ -34,7 +34,11 @@ export default {
 
     actions: {
         async setPortfolios({ commit }: { commit: Commit }, payload: any) {
-            let data = await loadPortfolios();
+            let data = await loadPortfolios(
+                // Could do the name, but the category is a searhc now...
+                payload.filteredCategory,
+                payload.search
+            );
             //save the data to state
             commit("SET_PORTFOLIOS", data);
             return data;

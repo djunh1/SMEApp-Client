@@ -41,7 +41,7 @@
 import Modal from "@/components/common/Modal.vue";
 import Close_Icon from "@/assets/icons/Close_Icon.vue";
 import { defineComponent, onBeforeMount, ref, watch, reactive } from "vue";
-import { loadPortfolios } from "@/api/portfolios/portfolios";
+import { loadAllPortfolios } from "@/api/portfolios/portfolios";
 import { iStock } from "@/models/iStock";
 
 export default defineComponent({
@@ -71,6 +71,8 @@ export default defineComponent({
 
         const portfolioIdtoUpdate = ref('')
 
+        const search = ref('')
+
         const closeModal = () => {
             context.emit('close-modal');
         }
@@ -80,7 +82,8 @@ export default defineComponent({
         }
 
         const getPortfolios = async () => {
-            portfolios.value = await loadPortfolios();
+
+            portfolios.value = await loadAllPortfolios();
 
         }
 
@@ -114,6 +117,7 @@ export default defineComponent({
             portfolios,
             presentPortfolio,
             portfolioIdtoUpdate,
+            search,
 
             closeModal,
             handleUpdateStock,

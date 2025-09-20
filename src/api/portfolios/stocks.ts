@@ -7,9 +7,15 @@ const URLS = {
     stocks: "stocks/"
 }
 
-export const loadStocks = () => {
+export const loadStocks = (
+    search: String
+) => {
     return new Promise((resolve, reject) => {
-        api.get(URLS.stocks)
+        api.get(URLS.stocks, {
+            params: {
+                search
+            }
+        })
             .then((response: AxiosResponse) => {
                 if (response.status === 200) {
                     resolve(response.data.results);
@@ -66,7 +72,7 @@ export const editRecordInStocks = (id: string, editedStonk: iStock) => {
 export const getStockDetails = (stockId: string) => {
     return new Promise((resolve, reject) => {
         api
-            .get(URLS.stocks + stockId + "/") //, {}
+            .get(URLS.stocks + stockId + "/", {})
             .then((response: AxiosResponse) => {
 
                 if (response.status === 200) {

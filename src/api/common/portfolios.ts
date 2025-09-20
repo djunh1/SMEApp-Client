@@ -9,7 +9,7 @@ const URLS = {
 export const loadPortfolios = () => {
   return new Promise((resolve, reject) => {
     api
-      .get(URLS.portfolios)
+      .get(URLS.portfolios, {})
       .then((response: AxiosResponse) => {
         if (response.status === 200) {
             // Not paginated do not need response.data.results

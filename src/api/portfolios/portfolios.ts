@@ -7,10 +7,39 @@ const URLS = {
     portfolios: "portfolios/"
 }
 
-export const loadPortfolios = () => {
+// We can add search terms here as the payload
+// Use the python API naming here
+export const loadPortfolios = (
+    category: string,
+    search: string
+) => {
+    return new Promise((resolve, reject) => {
+        
+        api.get(URLS.portfolios, {
+            params: {
+                category, 
+                search
+            }
+        })
+            .then((response: AxiosResponse) => {
+                if (response.status === 200) {
+                    resolve(response.data.results);
+                } else {
+                    reject();
+                }
+            })
+            .catch((error: AxiosError) => {
+                console.log("error in loading portfolios -> ", error)
+            });
+    });
+};
+
+export const loadAllPortfolios = ( ) => {
 
     return new Promise((resolve, reject) => {
-        api.get(URLS.portfolios)
+        api.get(URLS.portfolios, {
+        
+        })
             .then((response: AxiosResponse) => {
                 if (response.status === 200) {
                     resolve(response.data.results);
@@ -26,7 +55,6 @@ export const loadPortfolios = () => {
 
 export const addNewPortfolio = (newPortfolioRecord: Partial<iPortfolio>) => {
     return new Promise((resolve, reject) => {
-        console.log(newPortfolioRecord);
         api.post(URLS.portfolios,
             {
                 name: newPortfolioRecord.name,
@@ -83,7 +111,7 @@ export const getPortfolioDetails = (portfolioId: string) => {
 
     return new Promise((resolve, reject) => {
         api
-            .get(URLS.portfolios + portfolioId + "/") //, {}
+            .get(URLS.portfolios + portfolioId + "/", {})
             .then((response: AxiosResponse) => {
 
                 if (response.status === 200) {
