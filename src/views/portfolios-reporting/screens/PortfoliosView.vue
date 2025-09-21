@@ -16,15 +16,15 @@
                 <option value="" disabled selected>All Portfolios (eventually users portfolios)</option>
             </select>
         </div>
-            <div class="filter-wrapper">
-                <p>Portfolio Category: </p>
-                <select v-model="search">
-                    <option value="" disabled selected>All categories</option>
-                    <option v-for="(cat, i) in categories" :key="i" :value="cat">
-                        {{ cat }}</option>
-    
-                </select>
-            </div>
+        <div class="filter-wrapper">
+            <p>Portfolio Category: </p>
+            <select v-model="search">
+                <option value="" disabled selected>All categories</option>
+                <option v-for="(cat, i) in categories" :key="i" :value="cat">
+                    {{ cat }}</option>
+
+            </select>
+        </div>
         <!-- <div class="filter-wrapper">
             <p>Search</p>
             <input v-model="search"
@@ -33,17 +33,16 @@
                    @keyup.enter="filterList"></input>
         </div> -->
 
-         <div class="filter-wrapper">
+        <div class="filter-wrapper">
             <p>Filter</p>
             <button id="filter" class="filters_button" @click="filterList">Filter</button>
         </div>
 
         <div class="filter-wrapper">
             <p>Refresh</p>
-            <button id="refresh" class="filters_button"
-            @click="refreshList">Refresh</button>
+            <button id="refresh" class="filters_button" @click="refreshList">Refresh</button>
         </div>
-         
+
     </div>
 
     <create-portfolio-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-portfolio-modal>
@@ -60,14 +59,39 @@
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th @click="setSortingBy(ORDER_BY_NAME)">Name
+                        <Sorting_Icon class="sorting-icon" :class="orderBy === ORDER_BY_NAME ? 'active-sorting' : ''" />
+
+
+                    </th>
+                    <th @click="setSortingBy(ORDER_BY_UPDATED_AT)">
+                        Updated <Sorting_Icon class="sorting-icon"></Sorting_Icon>
+                    </th>
+
+                    <th @click=setSortingBy(ORDER_BY_NAME)>ID
+                        <span class="action-icon-wrapper">
+
+                            <Sorting_Icon class="sorting-icon"
+                                :class="orderBy === ORDER_BY_NAME ? 'active-sorting' : ''" />
+                            <span v-if="orderBy === ORDER_BY_UPDATED_AT" class="tooltiptext">Sort by name</span>
+                        </span>
+                    </th>
+                    <th @click=setSortingBy(ORDER_BY_UPDATED_AT)>Order date
+                        <span class="action-icon-wrapper">
+                            <Sorting_Icon class="sorting-icon"
+                                :class="orderBy === ORDER_BY_UPDATED_AT ? 'active-sorting' : ''" />
+                            <span v-if="orderBy === ORDER_BY_NAME" class="tooltiptext">Sort by updated</span>
+                        </span>
+                    </th>
+
                     <th>About</th>
                     <th>Type</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(item, i) in allPortfolios" :key="i" @click="openDetails(item)">
-                    <td>{{ item.name }}</td>
+                    <td> {{ item.name }}</td>
+                    <td> {{ formatDate(item.updated_at) }}</td>
                     <td>{{ item.description }}</td>
                     <td>{{ item.category?.name ?? 'None' }}</td>
                     <td class="table-actions">
@@ -81,9 +105,13 @@
                 </tr>
             </tbody>
         </table>
+        <pagination v-if="count > 0" :current-page="currentPage" :per-page="perPage" :number-of-pages="numberOfPages"
+            :count="count" @update-page="updatePage" @update-table-size="updateTableSize"></pagination>
     </div>
 </template>
 <script lang="ts">
+
+import formatDate from '@/composables/utils';
 
 import { loadPortfolios, editRecordInPortfolios } from '@/api/portfolios/portfolios';
 import { computed, defineComponent, onMounted, ref, toRaw } from 'vue';
@@ -93,14 +121,18 @@ import EditPortfolioModal from '../modals/EditPortfolioModal.vue';
 import Edit_Icon from '@/assets/icons/Edit_Icon.vue';
 import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
 import Plus_Icon from '@/assets/icons/Plus_Icon.vue';
+import Sorting_Icon from '@/assets/icons/Sorting_Icon.vue';
 import ConfirmDeleteModal from '../modals/ConfirmDeleteModal.vue';
 import { deleteRecordInPortfolios } from '@/api/portfolios/portfolios';
+
+import Pagination from '@/components/common/Pagination.vue';
 
 // State mgmt
 
 import { useStore } from 'vuex';
 
-// To add links to individual portfolio
+// TODO - To add links to individual portfolio, or is it OK just to natigate to port
+// from table?
 
 import router from '@/router';
 import { iPortfolio } from '@/models/iPortfolio';
@@ -112,13 +144,19 @@ export default defineComponent({
     components: {
         Edit_Icon,
         Plus_Icon,
+        Sorting_Icon,
         Trash_Icon,
         EditPortfolioModal,
         CreatePortfolioModal,
-        ConfirmDeleteModal
+        ConfirmDeleteModal,
+        Pagination
     },
 
     setup() {
+
+        const ORDER_BY_UPDATED_AT = 'updated_at';
+        const ORDER_BY_NAME = 'name'
+
         const store = useStore();
 
         // For deletion
@@ -130,13 +168,56 @@ export default defineComponent({
         const isEditModalVisible = ref(false);
         const isDeleteModalVisible = ref(false);
 
+        //Ordering
+
+        const orderBy = ref('updated_at');
+
         //Searching
 
-        const search = ref ('');
+        const search = ref('');
 
         //Still a search in the back end.  no filtering for portfolios yet
         const categories = ref('');
         const filteredCategory = ref('');
+
+        // pagination
+
+        const currentPage = ref(1);
+        const perPage = ref(15);
+
+        const numberOfPages = computed(() => {
+            const data = store.getters['paginationManagement/getNumberOfPages']
+            return Number(data);
+        })
+
+        const count = computed(() => {
+            const data = store.getters['paginationManagement/getCount']
+            return Number(data);
+        })
+
+        const updatePage = (page: any) => {
+            currentPage.value = page;
+            updateList();
+        }
+
+        const updateTableSize = (pageSize: any) => {
+            perPage.value = pageSize.value;
+            currentPage.value = 1;
+            updateList();
+        }
+
+
+        const closeModal = () => {
+            isCreateModalVisible.value = false;
+            isEditModalVisible.value = false;
+            isDeleteModalVisible.value = false;
+        }
+
+        const setSortingBy = (ordering: string) => {
+            orderBy.value = ordering;
+            updateList();
+        }
+
 
         const openDetails = (item: iPortfolio) => {
             let id = item.id;
@@ -174,13 +255,12 @@ export default defineComponent({
 
         // Searching and filtering
         const filterList = () => {
+            currentPage.value = 1
             updateList();
         }
 
         const refreshList = () => {
-            filteredCategory.value = '';
-            search.value = '';
-            updateList();
+            window.location.reload();
         }
 
 
@@ -192,26 +272,32 @@ export default defineComponent({
         }
 
         const getCategories = async () => {
-            let data: any = await loadCategoriesUnPaged();      
+            let data: any = await loadCategoriesUnPaged();
             categories.value = extractValues(data);
-            
+
         }
 
         const updateList = async () => {
 
-            return Promise.allSettled([
+            let data: any = await Promise.allSettled([
+
                 store.dispatch('portfolioManagement/setPortfolios', {
                     filteredCategory: filteredCategory.value,
-                    search: search.value
-                })
-            ])
+                    search: search.value,
+                    per_page: perPage.value,
+                    page: currentPage.value,
+                    order_by: orderBy.value
+                }),
+            ]);
+
+            let paginationInfo = data[0].value
+
+            await store.dispatch('paginationManagement/setNumberOfPages', paginationInfo.number_of_pages);
+            await store.dispatch('paginationManagement/setCount', paginationInfo.count);
+
+            return data
         }
 
-        const closeModal = () => {
-            isCreateModalVisible.value = false;
-            isEditModalVisible.value = false;
-            isDeleteModalVisible.value = false;
-        }
 
         const handleEdit = (editedPortfolio: any) => {
             isEditModalVisible.value = false;
@@ -248,8 +334,11 @@ export default defineComponent({
         })
 
         return {
-            entityId,
             ENTIRY_TYPE,
+            ORDER_BY_UPDATED_AT,
+            ORDER_BY_NAME,
+
+            entityId,
             portfolioIdToDelete,
             isDeleteModalVisible,
 
@@ -271,7 +360,19 @@ export default defineComponent({
             openDetails,
             search,
             refreshList,
-            updateList
+            updateList,
+            setSortingBy,
+
+            updatePage,
+            updateTableSize,
+
+            orderBy,
+
+            currentPage,
+            count,
+            numberOfPages,
+            perPage,
+            formatDate
 
         }
 

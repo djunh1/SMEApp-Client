@@ -34,7 +34,7 @@
             <p>Search</p>
             <input v-model="search"
                    type="text" 
-                   placeholder="Search by name of by portfolio"
+                   placeholder="Search for portfolio name"
                    @keyup.enter="filterList"></input>
         </div>
 
@@ -46,7 +46,7 @@
         <div class="filter-wrapper">
             <p>Refresh</p>
             <button id="refresh" class="filters_button"
-            @click="refreshList">Refresh</button>
+            @click="refreshList">Clear Filters</button>
         </div>
          
     </div>
@@ -55,10 +55,12 @@
         <table>
             <thead>
                 <tr>
+                    <th @click="setSortingBy(ORDER_BY_CREATED_AT)">Added on <Sorting_Icon class="sorting-icon"></Sorting_Icon></th>
+                    <th @click=setSortingBy(ORDER_BY_TICKER)>Ticker 
+                        <Sorting_Icon class="sorting-icon" :class="orderBy === ORDER_BY_TICKER ? 'active-sorting' : ''" />
+                    </th>
                     <th>Company Name</th>
-                    <th>Ticker </th>
                     <th>Sector</th>
-                    <th>Added on</th>
                     <th>Portfolio name</th>
                     <th>Action Jackson</th>
 
@@ -66,10 +68,11 @@
             </thead>
             <tbody>
                 <tr v-for="(item, i) in allStocks" :key="i" @click="openDetails(item)">
-                    <td>{{ item.company_name }}</td>
-                    <td>{{ item.ticker_name }}</td>
-                    <td>{{ item.sector }}</td>
                     <td>{{ formatDate(item.created_at) }}</td>
+                    <td>{{ item.ticker_name }}</td>
+                    <td>{{ item.company_name }}</td>
+                    <td>{{ item.sector }}</td>
+                    
                     <td>{{ item.portfolio.name }}</td>
                     <td>
                         <span>
@@ -82,6 +85,9 @@
                 </tr>
             </tbody>
         </table>
+
+                <pagination v-if="count > 0" :current-page="currentPage" :per-page="perPage" :number-of-pages="numberOfPages"
+                :count="count" @update-page="updatePage" @update-table-size="updateTableSize"></pagination>
     </div>
 </template>
 
@@ -98,23 +104,32 @@ import { deleteRecordInStocks } from '@/api/portfolios/stocks';
 import Edit_Icon from '@/assets/icons/Edit_Icon.vue';
 import Trash_Icon from '@/assets/icons/Trash_Icon.vue';
 import Plus_Icon from '@/assets/icons/Plus_Icon.vue';
+import Sorting_Icon from '@/assets/icons/Sorting_Icon.vue';
 
 import { useStore } from 'vuex';
 import { iStock } from '@/models/iStock';
 import router from '@/router';
+
+// Pagination
+import Pagination from '@/components/common/Pagination.vue';
 
 export default defineComponent({
 
     components: {
         Edit_Icon,
         Plus_Icon,
+        Sorting_Icon,
         Trash_Icon,
         CreateStockModal,
         EditStockModal,
-        ConfirmDeleteModal
+        ConfirmDeleteModal,
+        Pagination
     },
 
     setup() {
+
+        const ORDER_BY_CREATED_AT = 'created_at';
+        const ORDER_BY_TICKER = 'ticker_name'
         const store = useStore();
 
         const ENTIRY_TYPE = 'stock'
@@ -130,8 +145,38 @@ export default defineComponent({
         const stockObjToUpdate = ref()
 
         // Searching
-
         const search = ref('')
+
+        //Ordering
+
+        const orderBy = ref('created_at');
+
+        // Pagination
+        const currentPage = ref(1);
+        const perPage = ref(15);
+
+        const numberOfPages = computed(() => {
+            const data = store.getters['paginationManagement/getNumberOfPages']
+            return Number(data);
+        })
+
+        const count = computed(() => {
+            const data = store.getters['paginationManagement/getCount']
+            return Number(data);
+        })
+
+        const updatePage = (page: any) => {
+            currentPage.value = page;
+            updateList();
+        }
+
+        const updateTableSize = (pageSize: any) => {
+            perPage.value = pageSize.value;
+            currentPage.value = 1;
+            updateList();
+        }
+
+
 
         const allStocks = computed(() => {
             let data = store.getters['stockManagement/getStocks']
@@ -158,26 +203,47 @@ export default defineComponent({
         const closeModal = () => {
             isCreateModalVisible.value = false
             isEditModalVisible.value = false;
+            isDeleteModalVisible.value = false;
         }
 
-        //Searching/ filtering
+        //Searching and filtering
 
         const filterList = () => {
+            currentPage.value = 1
             updateList();
         }
 
         const refreshList = () => {
-            search.value = '';
+            window.location.reload();
+        }
+
+        // Ordering
+
+        const setSortingBy = (ordering: string) => {
+            orderBy.value = ordering;
             updateList();
         }
 
 
         const updateList = async () => {
-            return Promise.allSettled([
+
+            let data: any = await  Promise.allSettled([
                 store.dispatch('stockManagement/setStocks', {
-                    search: search.value
+                    search: search.value,
+                    per_page: perPage.value,
+                    page: currentPage.value,
+                    order_by: orderBy.value
                 })
-            ])
+            ]);
+
+            let pageInfo = data[0].value;
+
+            await store.dispatch('paginationManagement/setNumberOfPages', pageInfo.number_of_pages);
+            await store.dispatch('paginationManagement/setCount', pageInfo.count);
+
+            return data
+
+
         }
 
         const handleEdit = (editedStock: any) => {
@@ -227,10 +293,18 @@ export default defineComponent({
         })
 
 
-
         return {
-            entityId,
             ENTIRY_TYPE,
+            ORDER_BY_CREATED_AT,
+            ORDER_BY_TICKER,
+            currentPage,
+            numberOfPages,
+            count,
+            perPage,
+
+
+            entityId,
+    
             allStocks,
             isCreateModalVisible,
             isDeleteModalVisible,
@@ -244,6 +318,12 @@ export default defineComponent({
             closeModal,
             openDeleteModal,
             openEditModal,
+
+            setSortingBy,
+            orderBy,
+
+            updatePage,
+            updateTableSize,
 
             search,
             stockObjToUpdate,

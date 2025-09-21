@@ -34,13 +34,16 @@ export default {
 
     actions: {
         async setPortfolios({ commit }: { commit: Commit }, payload: any) {
-            let data = await loadPortfolios(
+            let data: any = await loadPortfolios(
                 // Could do the name, but the category is a searhc now...
                 payload.filteredCategory,
-                payload.search
+                payload.search,
+                payload.page,
+                payload.per_page,
+                payload.order_by
             );
             //save the data to state
-            commit("SET_PORTFOLIOS", data);
+            commit("SET_PORTFOLIOS", data.results);
             return data;
         },
         async setPortfolioDetails({ commit }: { commit: Commit }, payload: iPortfolio) {
@@ -62,7 +65,6 @@ export default {
         getPortfolios(state: GlobalState) {
             return state.portfolios;
         },
-
         getPortfolioDetails(state: GlobalState) {
             return state.portfolioDetails;
         }

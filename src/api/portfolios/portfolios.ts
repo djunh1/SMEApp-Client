@@ -11,19 +11,25 @@ const URLS = {
 // Use the python API naming here
 export const loadPortfolios = (
     category: string,
-    search: string
+    search: string,
+    page: string,
+    page_size: string,
+    order_by: string
 ) => {
     return new Promise((resolve, reject) => {
-        
+
         api.get(URLS.portfolios, {
             params: {
-                category, 
-                search
+                category,
+                search,
+                page,
+                page_size,
+                order_by
             }
         })
             .then((response: AxiosResponse) => {
                 if (response.status === 200) {
-                    resolve(response.data.results);
+                    resolve(response.data);
                 } else {
                     reject();
                 }
@@ -34,11 +40,11 @@ export const loadPortfolios = (
     });
 };
 
-export const loadAllPortfolios = ( ) => {
+export const loadAllPortfolios = () => {
 
     return new Promise((resolve, reject) => {
         api.get(URLS.portfolios, {
-        
+
         })
             .then((response: AxiosResponse) => {
                 if (response.status === 200) {

@@ -32,8 +32,13 @@ export default {
     },
     actions: {
         async setStocks({ commit }: { commit: Commit }, payload: any) {
-            let data = await loadStocks(payload.search);
-            commit('SET_STOCKS', data);
+            let data: any = await loadStocks(
+                payload.search,
+                payload.page,
+                payload.per_page,
+                payload.order_by
+                );
+            commit('SET_STOCKS', data.results);
             return data
         },
         async setStockDetails({ commit }: { commit: Commit }, payload: iStock) {

@@ -5,5 +5,9 @@ export interface GlobalState {
     portfolios: any[], //disables typescript
     portfolioDetails: iPortfolio,
     stocks: any[],
-    stockDetails: iStock
+    stockDetails: iStock,
+    pages: number,
+    pageNumber: number,
+    count: number,
+    numberOfPages: number
 }

@@ -8,17 +8,23 @@ const URLS = {
 }
 
 export const loadStocks = (
-    search: String
+    search: string,
+    page: string,
+    page_size: string,
+    order_by: string
 ) => {
     return new Promise((resolve, reject) => {
         api.get(URLS.stocks, {
             params: {
-                search
+                search,
+                page,
+                page_size,
+                order_by
             }
         })
             .then((response: AxiosResponse) => {
                 if (response.status === 200) {
-                    resolve(response.data.results);
+                    resolve(response.data);
                 } else {
                     reject();
                 }
@@ -53,7 +59,6 @@ export const addNewStock = (newStockRecord: Partial<iStock>) => {
 
 export const editRecordInStocks = (id: string, editedStonk: iStock) => {
     return new Promise((resolve, reject) => {
-        console.log("The new way to reference an ID ==> ", editedStonk.portfolio!.id)
         api.patch(URLS.stocks + id + '/', {
             ticker_name: editedStonk.tickerName,
             portfolio: editedStonk.portfolio!.id,

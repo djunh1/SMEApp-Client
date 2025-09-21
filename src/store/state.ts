@@ -7,7 +7,11 @@ const state = (): GlobalState => {
         portfolios: [],
         portfolioDetails: {} as iPortfolio,
         stocks: [],
-        stockDetails: {} as iStock
+        stockDetails: {} as iStock,
+        pages: 0,
+        pageNumber: 1,
+        count: 0,
+        numberOfPages: 0 
     }
 }
 
