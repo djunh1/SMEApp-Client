@@ -7,6 +7,11 @@ import ProfilesView from '@/views/relations/screens/ProfilesView.vue'
 import PortfoliosDetails from '@/views/portfolios-reporting/details/PortfoliosDetails.vue'
 import StocksDetails from '@/views/portfolios-reporting/details/StocksDetails.vue'
 
+import AdminView from '@/views/administration/AdminView.vue'
+import UserSettings from '@/views/administration/UserSettings.vue'
+
+import { get as GetFromStore } from '@/localStorage'
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -47,6 +52,30 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           screen: 'stock-details'
         }
+      },
+      {
+        path: 'administration',
+        name: 'administration',
+        component: AdminView,
+        meta: {
+          screen: 'administration'
+        },
+        beforeEnter: (to: any, from: any, next: any) => {
+          const isAdmin = GetFromStore('logged.isAdmin');
+          if (isAdmin) {
+            next()
+          }
+        }
+
+      },
+      {
+        path: 'investors',
+        name: 'investors',
+        component: UserSettings,
+        meta: {
+          screen: 'investors'
+        }
+
       }
     ]
   },
