@@ -10,7 +10,6 @@ const baseURL = process.env.VUE_APP_BASE_URL;
 const api = (axios: Axios) => {
 
     authorize("logged", (loginData: ILoginData) => {
-        console.log(loginData)
         if(loginData){
             axios.defaults.headers.common["Authorization"] = "Bearer " + loginData.access_token;
             axios.defaults.baseURL = baseURL + '/api/v1'

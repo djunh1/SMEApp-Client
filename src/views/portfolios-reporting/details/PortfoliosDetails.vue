@@ -77,7 +77,6 @@ export default defineComponent({
             name.value = details.name
             description.value = details.description;
             createdAt.value = formatDate(details.created_at);
-            console.log(details.category);
             categoryInfo.value =  details.category; 
         }
 

@@ -54,7 +54,6 @@ export default defineComponent({
 
 
             let response = await authenticate(body);
-            console.log(response);
             if (response !== undefined && response.status === 401){
                 console.warn("error logging", response)
             } else if (response !== undefined && response.status === 200){
