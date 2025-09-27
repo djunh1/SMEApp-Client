@@ -11,6 +11,10 @@
         <delete-user-action></delete-user-action>
         </Tab>
 
+        <Tab title="Unblock user">
+          <unblock-user-action ></unblock-user-action>
+        </Tab>
+
     </Tabs>
     <div>
         <users-overview class="users"></users-overview>
@@ -28,11 +32,13 @@ import Tabs from '@/components/common/Tabs.vue';
 
 import AddUserAction from './actions/AddUserAction.vue';
 import DeleteUserAction from './actions/DeleteUserAction.vue';
+import UnblockUserAction from '@/views/administration/actions/UnblockUserAction.vue';
 
 export default defineComponent({
     components: {
         AddUserAction,
         DeleteUserAction,
+        UnblockUserAction,
         Tab,
         Tabs,
         UsersOverview

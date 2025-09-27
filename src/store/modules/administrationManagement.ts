@@ -1,4 +1,4 @@
-import { getUsers, addUser, deleteUser } from "@/api/admin/admin";
+import { getUsers, addUser, deleteUser, unblockUser } from "@/api/admin/admin";
 
 import { IUser } from "@/models/iUser";
 
@@ -26,6 +26,11 @@ export default {
       state.users = state.users.filter((user) => {
         return user.id != Number(id);
       });
+    },
+    UNBLOCK_USER(state: GlobalState, selectedUsername: string) {
+      state.users[
+        state.users.findIndex((user) => user.username === selectedUsername)
+      ].is_blocked = false;
     },
   },
   actions: {
@@ -55,6 +60,17 @@ export default {
           return true;
         })
         .catch(() => {
+          return false;
+        });
+    },
+    async unblockUser({ commit }: { commit: Commit }, payload: string) {
+      return unblockUser(payload)
+        .then(() => {
+          commit("UNBLOCK_USER", payload);
+          return true;
+        })
+        .catch((e: any) => {
+          console.log("unblockUser is returning false ==>", e);
           return false;
         });
     },
