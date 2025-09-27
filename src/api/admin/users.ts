@@ -1,4 +1,5 @@
 import { ILoginCredentials } from "@/models/iLoginCredentials";
+import { IUser } from "@/models/iUser";
 import axios from "axios";
 
 export const authenticate = (creds: ILoginCredentials) => {

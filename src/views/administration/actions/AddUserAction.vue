@@ -39,16 +39,70 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
+import { IUser } from "@/models/iUser";
 
+import {addUser} from '@api/admin/admin'
+
+import { useStore } from "vuex";
 
 export default defineComponent({
     components: {},
 
 
-    setup(){
-        return {}
+    setup() {
+        const buttenEnabled = ref(false);
+
+        const firstName = ref();
+        const lastName = ref();
+        const email = ref();
+        const password = ref();
+        const isAdmin = ref();
+        const username = ref();
+        const store = useStore();
+
+
+        const submitForm = async () => {
+            const body = {
+                username: username.value,
+                first_name: firstName.value,
+                last_name: lastName.value,
+                email: email.value,
+                is_staff: isAdmin.value,
+                passwd: password.value,
+            };
+
+            let status = await store.dispatch('administrationManagement/addUser', body);
+
+            if (status) {
+                cleanForm()
+            }
+
+        }
+
+        const cleanForm = () => {
+            username.value = '',
+                firstName.value = '',
+                lastName.value = '',
+                email.value = '',
+                isAdmin.value = 0,
+                password.value = ''
+        }
+return {
+    submitForm,
+
+    firstName,
+    lastName,
+    email,
+    password,
+    isAdmin,
+    username
+}
     }
 });
 
 </script>
+
+<style lang='scss' scoped>
+@import "@/styles/components/administration.scss"
+</style>
