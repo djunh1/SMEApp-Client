@@ -19,7 +19,8 @@
 
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted } from 'vue';
+import { useStore } from 'vuex';
 
 import UsersOverview from './screens/UsersOverview.vue';
 import Tab from '@/components/common/Tab.vue';
@@ -31,13 +32,25 @@ import DeleteUserAction from './actions/DeleteUserAction.vue';
 export default defineComponent({
     components: {
         AddUserAction,
+        DeleteUserAction,
         Tab,
         Tabs,
         UsersOverview
     },
 
 
-    setup(props, context){
+    setup(){
+        const store = useStore();
+
+        const updateList = async () => {
+            return Promise.allSettled([
+                store.dispatch('administrationManagement/setUsers')
+            ])
+        }
+
+        onMounted(() => {
+            updateList()
+        })
         return {}
     }
 });

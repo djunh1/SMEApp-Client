@@ -39,3 +39,19 @@ export const addUser = (body: Partial<IUser>) => {
       console.error("error in add User >> ", error);
     });
 };
+
+export const deleteUser = (id: string) => {
+    return api.delete(URLS.users + `${id}/`)
+    .catch((error) => {
+      console.error("error in delete User >> ", error);
+    });
+  };
+
+  export const unblockUser = (username: string) => {
+    return api.post(URLS.users + "admin-reset-login-attempts", {
+        blocked_user: username
+    })
+    .catch((error) => {
+        console.error("error in unblock User >> ", error);
+    });
+  };
