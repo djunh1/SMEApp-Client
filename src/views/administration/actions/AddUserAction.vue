@@ -42,7 +42,7 @@
 import { defineComponent, ref, watch } from 'vue';
 import { IUser } from "@/models/iUser";
 
-import {addUser} from '@api/admin/admin'
+// import { addUser } from '@api/admin/admin';
 
 import { useStore } from "vuex";
 

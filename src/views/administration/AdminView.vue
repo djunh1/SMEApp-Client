@@ -3,16 +3,22 @@
         <span class="title">Admin </span>
     </header>
     <Tabs>
-        <Tab title="Add new user">
+        <Tab title="Add user">
           <add-user-action></add-user-action>   
         </Tab>
         
-        <Tab title="Delete a user">
+        <Tab title="Delete user">
         <delete-user-action></delete-user-action>
         </Tab>
 
-        <Tab title="Unblock user">
+        <Tab title="Unblock">
           <unblock-user-action ></unblock-user-action>
+        </Tab>
+        <Tab title=" Update status">
+            <update-user-status-action></update-user-status-action>
+        </Tab>
+        <Tab title=" Update user password">
+            <update-user-password-action></update-user-password-action>
         </Tab>
 
     </Tabs>
@@ -33,12 +39,17 @@ import Tabs from '@/components/common/Tabs.vue';
 import AddUserAction from './actions/AddUserAction.vue';
 import DeleteUserAction from './actions/DeleteUserAction.vue';
 import UnblockUserAction from '@/views/administration/actions/UnblockUserAction.vue';
+import UpdateUserStatusAction from '@/views/administration/actions/UpdateUserStatusAction.vue'
+import UpdateUserPasswordAction from '@/views/administration/actions/UpdateUserPasswordAction.vue'
+
 
 export default defineComponent({
     components: {
         AddUserAction,
         DeleteUserAction,
         UnblockUserAction,
+        UpdateUserPasswordAction,
+        UpdateUserStatusAction,
         Tab,
         Tabs,
         UsersOverview
@@ -64,12 +75,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.users {
-    position: absolute;
-    height: 30%;
-    bottom: 20px;
-    width: 78%;
-    margin: .5rem .5rem 1rem;
-    overflow-x: scroll;
-}
+@import "@/styles/components/administration.scss";
 </style>

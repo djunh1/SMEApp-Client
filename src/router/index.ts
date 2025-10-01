@@ -8,7 +8,7 @@ import PortfoliosDetails from '@/views/portfolios-reporting/details/PortfoliosDe
 import StocksDetails from '@/views/portfolios-reporting/details/StocksDetails.vue'
 
 import AdminView from '@/views/administration/AdminView.vue'
-import UserSettings from '@/views/administration/UserSettings.vue'
+import UserSettings  from '@/views/user/screens/UserSettings.vue'
 
 import { get as GetFromStore } from '@/localStorage'
 
@@ -69,6 +69,12 @@ const routes: Array<RouteRecordRaw> = [
 
       },
       {
+        path: "/user-settings",
+        name: "user-settings",
+        component: UserSettings,
+        meta: { screen: "user-settings" },
+      },
+      {
         path: 'investors',
         name: 'investors',
         component: UserSettings,
@@ -83,7 +89,18 @@ const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+});
+
+router.beforeEach( async(to, from) => {
+  const isLogged = Boolean(GetFromStore('logged'));
+  const requiresReset = GetFromStore('logged.requiresReset');
+
+  if(!isLogged && to.name !== 'dashboard'){
+    return {name: 'dashboard'}
+  } else if( requiresReset && to.name !== 'user-settings') {
+    return { name: 'user-settings'}
+  }
 })
 
 export default router

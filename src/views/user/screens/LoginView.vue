@@ -61,6 +61,7 @@ export default defineComponent({
                 console.info("login success", response.data);
                 SaveToStorage('logged', {
                     username: response.data.username,
+                    id: response.data.id,
                     isAdmin: response.data.is_admin,
                     access_token: response.data.access,
                     requiresReset: response.data.requires_reset
@@ -82,7 +83,7 @@ export default defineComponent({
 </script>
 <style lang='scss'>
     .login {
-        background-image: url('../../assets/login_background.png');
+        background-image: url('../../../assets/login_background.png');
         background-size: cover;
         height: 100vh;
         width: 100%;
