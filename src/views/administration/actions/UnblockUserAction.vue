@@ -31,9 +31,9 @@
 import { computed, defineComponent, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { IUser } from '@/models/iUser';
+import { showNotification } from '@/composables/outlets';
 
-
-
+// TODO doesnt work.  get users?
 export default defineComponent({
 
     setup() {
@@ -64,6 +64,26 @@ export default defineComponent({
         const unblockUser = async () => {
             let status = await store.dispatch('administrationManagement/unblockUser', username.value);
             
+            if (status) {
+                showNotification({
+                    props: {
+                        type: 'success',
+                        duration: 5000,
+                        message:
+                            `User unblocked!`
+                    },
+                });
+                resetDropdown()
+            } else {
+                showNotification({
+                    props: {
+                        type: 'error',
+                        duration: 5000,
+                        message:
+                            `User cannot be unblocked at the moment, please try later!`
+                    },
+                });
+            }
         }
 
         const resetDropdown = () => {

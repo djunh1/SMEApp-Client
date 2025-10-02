@@ -1,6 +1,7 @@
 
 import { nanoid } from 'nanoid';
 import { markRaw, ref } from "vue";
+import Notification from '@/components/outlets/Notification.vue';
 
 const outlets = ref([])
 
@@ -22,6 +23,16 @@ export const hideOutlet = (outlet_id: string) => {
     outlets.value = outlets.value.filter(
         (outlet: any) => outlet.outlet_id !== outlet_id
     );
+}
+
+export const showNotification = ({props, ...params}: any) => {
+
+    showOutlet({
+        component: Notification,
+        props,
+        type: 'notification',
+        ...params
+    });
 }
 
 export const showModal = ({component, props, ...params}: any) => {

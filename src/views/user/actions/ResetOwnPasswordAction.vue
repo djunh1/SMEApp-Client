@@ -25,7 +25,7 @@ import { resetOwnPassword } from '@/api/admin/users';
 import router from '@/router';
 
 import { remove as removeFromStore } from '@/localStorage';
-//import { showNotification } from '@/composables/outlets';
+import { showNotification } from '@/composables/outlets';
 
 export default defineComponent({
 
@@ -55,13 +55,13 @@ export default defineComponent({
 
 
         const notify = (message: string, type: string) => {
-            // showNotification({
-            //     props: {
-            //         type,
-            //         duration: 5000,
-            //         message
-            //     },
-            // });
+            showNotification({
+                props: {
+                    type,
+                    duration: 5000,
+                    message
+                },
+            });
         }
 
         const validate = () => {

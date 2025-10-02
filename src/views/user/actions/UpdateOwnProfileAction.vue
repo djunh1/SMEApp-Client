@@ -39,7 +39,7 @@ import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex';
 
 import { get as getFromStore, load as loadFromStore, save as saveToStore } from '@/localStorage/index';
-// import { showNotification } from '@/composables/outlets';
+import { showNotification } from '@/composables/outlets';
 
 // import Loader from '@/components/common/Loader.vue';
 import { SMALL_LOADER_COLOR } from '@/constants/colors';
@@ -83,24 +83,24 @@ export default defineComponent({
 
 
             if (response && response.status && response.status === 200) {
-                // showNotification({
-                //     props: {
-                //         type: 'success',
-                //         duration: 5000,
-                //         message: `The user ${body.username} successfully updated`,
-                //     },
-                // });
+                showNotification({
+                    props: {
+                        type: 'success',
+                        duration: 5000,
+                        message: `The user ${body.username} successfully updated`,
+                    },
+                });
                 resetForm()
                 updateUI(body.username);
                 isSubmitting.value = false;
             } else if (response.response.status === 406) {
-                // showNotification({
-                //     props: {
-                //         type: 'error',
-                //         duration: 5000,
-                //         message: `The user ${body.username} profile can not be updated. ${response.response.data.error}`,
-                //     },
-                // });
+                showNotification({
+                    props: {
+                        type: 'error',
+                        duration: 5000,
+                        message: `The user ${body.username} profile can not be updated. ${response.response.data.error}`,
+                    },
+                });
                 isSubmitting.value = false;
             }
 
