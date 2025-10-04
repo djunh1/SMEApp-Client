@@ -13,7 +13,7 @@
         <div class="filter-wrapper">
             <p>Portfolio Name</p>
             <select name="" id="">
-                <option value="" disabled selected>All Portfolios (eventually users portfolios)</option>
+                <option value="" disabled selected>All Portfolios</option>
             </select>
         </div>
         <div class="filter-wrapper">
@@ -95,11 +95,13 @@
                     <td>{{ item.description }}</td>
                     <td>{{ item.category?.name ?? 'None' }}</td>
                     <td class="table-actions">
-                        <span>
-                            <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon" />
+                        <span class="action-icon-wrapper">
+                            <Edit_Icon @click.stop @click="openEditModal(item.id)" class="action-icon" />
+                            <span class="tooltiptext">Edit</span>
                         </span>
-                        <span>
-                            <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="table_icon__left" />
+                        <span class="action-icon-wrapper">
+                            <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="action-icon" />
+                            <span class="tooltiptext">Delete</span>
                         </span>
                     </td>
                 </tr>

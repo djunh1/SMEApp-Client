@@ -13,7 +13,8 @@
         </strong>
       </label>
 
-      <input type="text" v-model="portfolioName"></input>
+      <input type="text" v-model="portfolioName" @keyup="validatePortfolioName"></input>
+      <error-message v-if="!portfolioNameValid" :message="'portfolio name must be longer'"></error-message>
 
       <label>
         <strong>
@@ -61,10 +62,13 @@ import { addNewPortfolio } from "@/api/portfolios/portfolios";
 import { useStore } from "vuex";
 import { loadCategories } from "@/api/common/categories";
 
+import ErrorMessage from '@/components/common/ErrorMessage.vue';
+
 export default defineComponent({
   components: {
     Modal,
     Close_Icon,
+    ErrorMessage
   },
 
   emits: ["close-modal"],
@@ -78,6 +82,9 @@ export default defineComponent({
 
     // Foreign keys
     const categories = ref()
+
+    // Error msg
+    const portfolioNameValid = ref(true)
 
     const store = useStore();
     watch(() => [portfolioName.value,
@@ -100,6 +107,14 @@ export default defineComponent({
 
     const closeModal = () => {
       context.emit('close-modal');
+    }
+
+    const validatePortfolioName = () => {
+      if(portfolioName.value.length < 5){
+        portfolioNameValid.value = false;
+      } else {
+        portfolioNameValid.value = true;
+      }
     }
 
     const addNewRecord = () => {
@@ -133,7 +148,10 @@ export default defineComponent({
       categoryId,
 
       addNewRecord,
-      closeModal
+      closeModal,
+
+      validatePortfolioName,
+      portfolioNameValid
     };
   },
 });

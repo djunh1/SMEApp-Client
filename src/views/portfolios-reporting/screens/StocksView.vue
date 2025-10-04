@@ -74,12 +74,14 @@
                     <td>{{ item.sector }}</td>
                     
                     <td>{{ item.portfolio.name }}</td>
-                    <td>
-                        <span>
-                            <Edit_Icon @click.stop @click="openEditModal(item.id)" class="table_icon__left" />
+                    <td class="table-actions">
+                        <span class="action-icon-wrapper">
+                            <Edit_Icon @click.stop @click="openEditModal(item.id)" class="action-icon" />
+                            <span class="tooltiptext">Edit</span>
                         </span>
-                        <span>
-                            <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="table_icon__left" />
+                        <span class="action-icon-wrapper">
+                            <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="action-icon" />
+                            <span class="tooltiptext">Delete</span>
                         </span>
                     </td>
                 </tr>
