@@ -1,31 +1,35 @@
 <template>
-    <header>
-        <span class="title">
-            Home / Portfolios
-        </span>
-        <button class="button is-primary is-on-header" @click="openCreateModal()">
-            <Plus_Icon class="nav_icon"></Plus_Icon>
-            New Portfolio
-        </button>
-    </header>
+    <slot name="loader" v-if="isLoading">
+        <loader :message="'Loading Portfolios'" :type="'large'" :color="LARGE_LOADER_COLOR"></loader>
+    </slot>
+    <slot v-else>
+        <header>
+            <span class="title">
+                Home / Portfolios
+            </span>
+            <button class="button is-primary is-on-header" @click="openCreateModal()">
+                <Plus_Icon class="nav_icon"></Plus_Icon>
+                New Portfolio
+            </button>
+        </header>
 
-    <div class="filters">
-        <div class="filter-wrapper">
-            <p>Portfolio Name</p>
-            <select name="" id="">
-                <option value="" disabled selected>All Portfolios</option>
-            </select>
-        </div>
-        <div class="filter-wrapper">
-            <p>Portfolio Category: </p>
-            <select v-model="search">
-                <option value="" disabled selected>All categories</option>
-                <option v-for="(cat, i) in categories" :key="i" :value="cat">
-                    {{ cat }}</option>
+        <div class="filters">
+            <div class="filter-wrapper">
+                <p>Portfolio Name</p>
+                <select name="" id="">
+                    <option value="" disabled selected>All Portfolios</option>
+                </select>
+            </div>
+            <div class="filter-wrapper">
+                <p>Portfolio Category: </p>
+                <select v-model="search">
+                    <option value="" disabled selected>All categories</option>
+                    <option v-for="(cat, i) in categories" :key="i" :value="cat">
+                        {{ cat }}</option>
 
-            </select>
-        </div>
-        <!-- <div class="filter-wrapper">
+                </select>
+            </div>
+            <!-- <div class="filter-wrapper">
             <p>Search</p>
             <input v-model="search"
                    type="text" 
@@ -33,83 +37,86 @@
                    @keyup.enter="filterList"></input>
         </div> -->
 
-        <div class="filter-wrapper">
-            <p>Filter</p>
-            <button id="filter" class="filters_button" @click="filterList">Filter</button>
+            <div class="filter-wrapper">
+                <p>Filter</p>
+                <button id="filter" class="filters_button" @click="filterList">Filter</button>
+            </div>
+
+            <div class="filter-wrapper">
+                <p>Refresh</p>
+                <button id="refresh" class="filters_button" @click="refreshList">Refresh</button>
+            </div>
+
         </div>
 
-        <div class="filter-wrapper">
-            <p>Refresh</p>
-            <button id="refresh" class="filters_button" @click="refreshList">Refresh</button>
-        </div>
+        <create-portfolio-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-portfolio-modal>
 
-    </div>
-
-    <create-portfolio-modal v-if="isCreateModalVisible" @close-modal="closeModal()"></create-portfolio-modal>
-
-    <edit-portfolio-modal v-if="isEditModalVisible" @close-modal="closeModal" :portfolio="portfolioObjectToUpdate"
-        @handle-edit="handleEdit"></edit-portfolio-modal>
+        <edit-portfolio-modal v-if="isEditModalVisible" @close-modal="closeModal" :portfolio="portfolioObjectToUpdate"
+            @handle-edit="handleEdit"></edit-portfolio-modal>
 
 
-    <confirm-delete-modal v-if="isDeleteModalVisible" :entity-type="ENTIRY_TYPE" :entity-id="entityId"
-        @close-modal="closeModal" @handle-delete="handleDelete">
+        <confirm-delete-modal v-if="isDeleteModalVisible" :entity-type="ENTIRY_TYPE" :entity-id="entityId"
+            @close-modal="closeModal" @handle-delete="handleDelete">
 
-    </confirm-delete-modal>
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th @click="setSortingBy(ORDER_BY_NAME)">Name
-                        <Sorting_Icon class="sorting-icon" :class="orderBy === ORDER_BY_NAME ? 'active-sorting' : ''" />
-
-
-                    </th>
-                    <th @click="setSortingBy(ORDER_BY_UPDATED_AT)">
-                        Updated <Sorting_Icon class="sorting-icon"></Sorting_Icon>
-                    </th>
-
-                    <th @click=setSortingBy(ORDER_BY_NAME)>ID
-                        <span class="action-icon-wrapper">
-
+        </confirm-delete-modal>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th @click="setSortingBy(ORDER_BY_NAME)">Name
                             <Sorting_Icon class="sorting-icon"
                                 :class="orderBy === ORDER_BY_NAME ? 'active-sorting' : ''" />
-                            <span v-if="orderBy === ORDER_BY_UPDATED_AT" class="tooltiptext">Sort by name</span>
-                        </span>
-                    </th>
-                    <th @click=setSortingBy(ORDER_BY_UPDATED_AT)>Order date
-                        <span class="action-icon-wrapper">
-                            <Sorting_Icon class="sorting-icon"
-                                :class="orderBy === ORDER_BY_UPDATED_AT ? 'active-sorting' : ''" />
-                            <span v-if="orderBy === ORDER_BY_NAME" class="tooltiptext">Sort by updated</span>
-                        </span>
-                    </th>
 
-                    <th>About</th>
-                    <th>Type</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item, i) in allPortfolios" :key="i" @click="openDetails(item)">
-                    <td> {{ item.name }}</td>
-                    <td> {{ formatDate(item.updated_at) }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>{{ item.category?.name ?? 'None' }}</td>
-                    <td class="table-actions">
-                        <span class="action-icon-wrapper">
-                            <Edit_Icon @click.stop @click="openEditModal(item.id)" class="action-icon" />
-                            <span class="tooltiptext">Edit</span>
-                        </span>
-                        <span class="action-icon-wrapper">
-                            <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="action-icon" />
-                            <span class="tooltiptext">Delete</span>
-                        </span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <pagination v-if="count > 0" :current-page="currentPage" :per-page="perPage" :number-of-pages="numberOfPages"
-            :count="count" @update-page="updatePage" @update-table-size="updateTableSize"></pagination>
-    </div>
+
+                        </th>
+                        <th @click="setSortingBy(ORDER_BY_UPDATED_AT)">
+                            Updated <Sorting_Icon class="sorting-icon"></Sorting_Icon>
+                        </th>
+
+                        <th @click=setSortingBy(ORDER_BY_NAME)>ID
+                            <span class="action-icon-wrapper">
+
+                                <Sorting_Icon class="sorting-icon"
+                                    :class="orderBy === ORDER_BY_NAME ? 'active-sorting' : ''" />
+                                <span v-if="orderBy === ORDER_BY_UPDATED_AT" class="tooltiptext">Sort by name</span>
+                            </span>
+                        </th>
+                        <th @click=setSortingBy(ORDER_BY_UPDATED_AT)>Order date
+                            <span class="action-icon-wrapper">
+                                <Sorting_Icon class="sorting-icon"
+                                    :class="orderBy === ORDER_BY_UPDATED_AT ? 'active-sorting' : ''" />
+                                <span v-if="orderBy === ORDER_BY_NAME" class="tooltiptext">Sort by updated</span>
+                            </span>
+                        </th>
+
+                        <th>About</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, i) in allPortfolios" :key="i" @click="openDetails(item)">
+                        <td> {{ item.name }}</td>
+                        <td> {{ formatDate(item.updated_at) }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.category?.name ?? 'None' }}</td>
+                        <td class="table-actions">
+                            <span class="action-icon-wrapper">
+                                <Edit_Icon @click.stop @click="openEditModal(item.id)" class="action-icon" />
+                                <span class="tooltiptext">Edit</span>
+                            </span>
+                            <span class="action-icon-wrapper">
+                                <Trash_Icon @click.stop @click="openDeleteModal(item.id)" class="action-icon" />
+                                <span class="tooltiptext">Delete</span>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <pagination v-if="count > 0" :current-page="currentPage" :per-page="perPage"
+                :number-of-pages="numberOfPages" :count="count" @update-page="updatePage"
+                @update-table-size="updateTableSize"></pagination>
+        </div>
+    </slot>
 </template>
 <script lang="ts">
 
@@ -128,7 +135,7 @@ import ConfirmDeleteModal from '../modals/ConfirmDeleteModal.vue';
 import { deleteRecordInPortfolios } from '@/api/portfolios/portfolios';
 
 import Pagination from '@/components/common/Pagination.vue';
-
+import Loader from '@/components/common/Loader.vue';
 // State mgmt
 
 import { useStore } from 'vuex';
@@ -141,6 +148,10 @@ import { iPortfolio } from '@/models/iPortfolio';
 import { loadCategories, loadCategoriesUnPaged } from '@/api/common/categories';
 import { extractValues, extractIds } from '@/composables/utils';
 
+
+
+import { LARGE_LOADER_COLOR } from '@/constants/colors';
+
 export default defineComponent({
 
     components: {
@@ -151,7 +162,8 @@ export default defineComponent({
         EditPortfolioModal,
         CreatePortfolioModal,
         ConfirmDeleteModal,
-        Pagination
+        Pagination,
+        Loader
     },
 
     setup() {
@@ -186,6 +198,9 @@ export default defineComponent({
 
         const currentPage = ref(1);
         const perPage = ref(15);
+
+        // Loader
+        const isLoading = ref(false);
 
         const numberOfPages = computed(() => {
             const data = store.getters['paginationManagement/getNumberOfPages']
@@ -281,6 +296,8 @@ export default defineComponent({
 
         const updateList = async () => {
 
+            isLoading.value = true;
+
             let data: any = await Promise.allSettled([
 
                 store.dispatch('portfolioManagement/setPortfolios', {
@@ -297,6 +314,7 @@ export default defineComponent({
             await store.dispatch('paginationManagement/setNumberOfPages', paginationInfo.number_of_pages);
             await store.dispatch('paginationManagement/setCount', paginationInfo.count);
 
+            isLoading.value = false;
             return data
         }
 
@@ -339,6 +357,7 @@ export default defineComponent({
             ENTIRY_TYPE,
             ORDER_BY_UPDATED_AT,
             ORDER_BY_NAME,
+            LARGE_LOADER_COLOR,
 
             entityId,
             portfolioIdToDelete,
@@ -374,7 +393,9 @@ export default defineComponent({
             count,
             numberOfPages,
             perPage,
-            formatDate
+            formatDate,
+
+            isLoading
 
         }
 

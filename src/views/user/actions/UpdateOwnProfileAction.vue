@@ -22,7 +22,7 @@
 
                 <button type="submit" class="button is-primary">
                     <slot name="loader" v-if="isSubmitting">
-                        <!-- <loader :message="''" :type="'small'" :color="SMALL_LOADER_COLOR"></loader> -->
+                        <loader :message="''" :type="'small'" :color="SMALL_LOADER_COLOR"></loader>
                     </slot>
                     <slot v-else>
                         Save
@@ -41,12 +41,12 @@ import { useStore } from 'vuex';
 import { get as getFromStore, load as loadFromStore, save as saveToStore } from '@/localStorage/index';
 import { showNotification } from '@/composables/outlets';
 
-// import Loader from '@/components/common/Loader.vue';
+import Loader from '@/components/common/Loader.vue';
 import { SMALL_LOADER_COLOR } from '@/constants/colors';
 
 export default defineComponent({
     components: {
-        // Loader
+        Loader
     },
     props: {
         user: {

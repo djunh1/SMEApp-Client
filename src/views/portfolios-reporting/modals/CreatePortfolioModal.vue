@@ -68,7 +68,7 @@ export default defineComponent({
   components: {
     Modal,
     Close_Icon,
-    ErrorMessage
+    ErrorMessage,
   },
 
   emits: ["close-modal"],

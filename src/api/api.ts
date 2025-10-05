@@ -48,10 +48,16 @@ const api = (axios: Axios) => {
     controller.abort();
   };
 
+  const sleep = (miliseconds: number) => (response: AxiosResponse) => 
+    new Promise<AxiosResponse>((resolve) => {
+      setTimeout(() => resolve(response), miliseconds)
+    })
+
   return {
-    get: <T>(url: string, config: any) => axios.get<T>(url, {signal: controller.signal, ...config }),
+    // get: <T>(url: string, config: any) => axios.get<T>(url, {signal: controller.signal, ...config }).then(sleep(1000)),
+    get: <T>(url: string, config: any) => axios.get<T>(url, {...config }).then(sleep(1000)),
     post: <T>(url: string, body: object) => axios.post<T>(url, body),
-    put: <T>(url: string, body: object) => axios.put<T>(url, body),
+    put: <T>(url: string, body: object) => axios.put<T>(url, body).then(sleep(4000)),
     patch: <T>(url: string, body: object) => axios.patch<T>(url, body),
     delete: <T>(url: string) => axios.delete<T>(url),
     cancel: () => cancelRequests()
