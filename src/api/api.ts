@@ -3,6 +3,8 @@ import { authorize } from "@/localStorage";
 import { ILoginData } from "@/models/ILoginData";
 import router from "@/router";
 import { remove as removeFromStore } from "@/localStorage";
+import { handleUnauthorizedResponse } from "./services/handleUnauthorizedResponse";
+
 
 axios.defaults.headers.common["Content-Type"] = "application/json";
 
@@ -30,13 +32,8 @@ const api = (axios: Axios) => {
       }
 
       if (error.response!.status === 401) {
-        console.log("401 error , ", error);
-        removeFromStore("logged");
-        alert("Session is terminated. Log in again.");
+        handleUnauthorizedResponse();
 
-        router.push({
-          name: "dashboard",
-        });
       } else {
         return Promise.reject(error);
       }
@@ -55,9 +52,9 @@ const api = (axios: Axios) => {
 
   return {
     // get: <T>(url: string, config: any) => axios.get<T>(url, {signal: controller.signal, ...config }).then(sleep(1000)),
-    get: <T>(url: string, config: any) => axios.get<T>(url, {...config }).then(sleep(1000)),
+    get: <T>(url: string, config: any) => axios.get<T>(url, {...config }).then(sleep(40)),
     post: <T>(url: string, body: object) => axios.post<T>(url, body),
-    put: <T>(url: string, body: object) => axios.put<T>(url, body).then(sleep(4000)),
+    put: <T>(url: string, body: object) => axios.put<T>(url, body).then(sleep(40)),
     patch: <T>(url: string, body: object) => axios.patch<T>(url, body),
     delete: <T>(url: string) => axios.delete<T>(url),
     cancel: () => cancelRequests()
